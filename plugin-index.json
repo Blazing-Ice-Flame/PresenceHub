@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "plugins": [
+    {
+      "id": "youtube",
+      "name": "YouTube",
+      "version": "1.0.0",
+      "apiVersion": 1,
+      "author": "Ombryal",
+      "description": "Official YouTube Presence plugin.",
+      "downloadUrl": "",
+      "sha256": "",
+      "signature": "",
+      "verified": true
+    }
+  ]
+}
