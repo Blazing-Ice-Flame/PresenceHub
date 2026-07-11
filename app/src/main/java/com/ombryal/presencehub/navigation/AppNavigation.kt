@@ -1,13 +1,14 @@
 package com.ombryal.presencehub.navigation
 
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Storefront
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -18,6 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -52,9 +54,10 @@ private val bottomItems = listOf(
     BottomItem(Routes.STORE, "Store", Icons.Default.Storefront),
     BottomItem(Routes.ACCOUNT, "Account", Icons.Default.Person),
     BottomItem(Routes.ABOUT, "About", Icons.Default.Info),
-    BottomItem(Routes.SETTINGS, "Settings", Icons.Default.Settings),
+    BottomItem(Routes.SETTINGS, "Settings", Icons.Default.Settings)
 )
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppNavigation(
     storeState: PluginStoreState,
@@ -90,9 +93,8 @@ fun AppNavigation(
         bottomBar = {
             NavigationBar {
                 bottomItems.forEach { item ->
-                    val selected = currentRoute == item.route
                     NavigationBarItem(
-                        selected = selected,
+                        selected = currentRoute == item.route,
                         onClick = {
                             if (currentRoute != item.route) {
                                 navController.navigate(item.route) {
@@ -104,8 +106,15 @@ fun AppNavigation(
                                 }
                             }
                         },
-                        icon = { Icon(item.icon, contentDescription = item.label) },
-                        label = { Text(item.label) }
+                        icon = {
+                            Icon(
+                                imageVector = item.icon,
+                                contentDescription = item.label
+                            )
+                        },
+                        label = {
+                            Text(item.label)
+                        }
                     )
                 }
             }
@@ -114,23 +123,16 @@ fun AppNavigation(
         NavHost(
             navController = navController,
             startDestination = Routes.HOME,
-            modifier = androidx.compose.ui.Modifier.padding(paddingValues)
+            modifier = Modifier.padding(paddingValues)
         ) {
+
             composable(Routes.HOME) {
                 HomeScreen(
                     storeState = storeState,
-                    onOpenStore = {
-                        navController.navigate(Routes.STORE)
-                    },
-                    onOpenAccount = {
-                        navController.navigate(Routes.ACCOUNT)
-                    },
-                    onOpenAbout = {
-                        navController.navigate(Routes.ABOUT)
-                    },
-                    onOpenSettings = {
-                        navController.navigate(Routes.SETTINGS)
-                    }
+                    onOpenStore = { navController.navigate(Routes.STORE) },
+                    onOpenAccount = { navController.navigate(Routes.ACCOUNT) },
+                    onOpenAbout = { navController.navigate(Routes.ABOUT) },
+                    onOpenSettings = { navController.navigate(Routes.SETTINGS) }
                 )
             }
 
@@ -171,8 +173,7 @@ fun AppNavigation(
             }
 
             composable(Routes.PLUGIN_DETAILS) {
-                val plugin = selectedPlugin
-                if (plugin != null) {
+                selectedPlugin?.let { plugin ->
                     PluginDetailsScreen(
                         plugin = plugin,
                         onInstall = onInstallPlugin,
