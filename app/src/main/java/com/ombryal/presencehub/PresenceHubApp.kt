@@ -12,8 +12,7 @@ fun PresenceHubApp(
     onInstallPlugin: (PluginRegistryEntry) -> Unit,
     onUninstallPlugin: (PluginRegistryEntry) -> Unit,
     onStartRpc: () -> Unit,
-    onStopRpc: () -> Unit,
-    onOpenSettings: () -> Unit
+    onStopRpc: () -> Unit
 ) {
     AppNavigation(
         storeState = storeState,
@@ -21,7 +20,6 @@ fun PresenceHubApp(
         onInstallPlugin = onInstallPlugin,
         onUninstallPlugin = onUninstallPlugin,
         onStartRpc = onStartRpc,
-        onStopRpc = onStopRpc,
-        onOpenSettings = onOpenSettings
+        onStopRpc = onStopRpc
     )
 }
