@@ -30,6 +30,7 @@ import androidx.navigation.compose.rememberNavController
 import com.ombryal.presencehub.plugins.PluginRegistryEntry
 import com.ombryal.presencehub.plugins.PluginStoreState
 import com.ombryal.presencehub.ui.account.AccountScreen
+import com.ombryal.presencehub.ui.account.AccountUiState
 import com.ombryal.presencehub.ui.about.AboutScreen
 import com.ombryal.presencehub.ui.addapp.AddAppScreen
 import com.ombryal.presencehub.ui.addapp.PluginDetailsScreen
@@ -61,6 +62,7 @@ private val bottomItems = listOf(
 @Composable
 fun AppNavigation(
     storeState: PluginStoreState,
+    accountState: AccountUiState,
     onRefreshPlugins: () -> Unit,
     onInstallPlugin: (PluginRegistryEntry) -> Unit,
     onUninstallPlugin: (PluginRegistryEntry) -> Unit,
@@ -163,14 +165,13 @@ fun AppNavigation(
                         selectedPlugin = plugin
                         navController.navigate(Routes.PLUGIN_DETAILS)
                     },
-                    onBack = {
-                        navController.popBackStack()
-                    }
+                    onBack = { navController.popBackStack() }
                 )
             }
 
             composable(Routes.ACCOUNT) {
                 AccountScreen(
+                    state = accountState,
                     onStartRpc = onStartRpc,
                     onStopRpc = onStopRpc
                 )
@@ -194,9 +195,7 @@ fun AppNavigation(
                         plugin = plugin,
                         onInstall = onInstallPlugin,
                         onUninstall = onUninstallPlugin,
-                        onBack = {
-                            navController.popBackStack()
-                        }
+                        onBack = { navController.popBackStack() }
                     )
                 }
             }
