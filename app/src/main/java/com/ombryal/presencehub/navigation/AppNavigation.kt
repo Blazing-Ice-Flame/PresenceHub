@@ -1,7 +1,7 @@
 package com.ombryal.presencehub.navigation
 
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Person
@@ -10,6 +10,7 @@ import androidx.compose.material.icons.filled.Storefront
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
@@ -27,8 +28,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.ombryal.presencehub.plugins.PluginRegistryEntry
 import com.ombryal.presencehub.plugins.PluginStoreState
-import com.ombryal.presencehub.ui.about.AboutScreen
 import com.ombryal.presencehub.ui.account.AccountScreen
+import com.ombryal.presencehub.ui.about.AboutScreen
 import com.ombryal.presencehub.ui.addapp.AddAppScreen
 import com.ombryal.presencehub.ui.addapp.PluginDetailsScreen
 import com.ombryal.presencehub.ui.home.HomeScreen
@@ -51,10 +52,8 @@ private data class BottomItem(
 
 private val bottomItems = listOf(
     BottomItem(Routes.HOME, "Home", Icons.Default.Home),
-    BottomItem(Routes.STORE, "Store", Icons.Default.Storefront),
     BottomItem(Routes.ACCOUNT, "Account", Icons.Default.Person),
-    BottomItem(Routes.ABOUT, "About", Icons.Default.Info),
-    BottomItem(Routes.SETTINGS, "Settings", Icons.Default.Settings)
+    BottomItem(Routes.ABOUT, "About", Icons.Default.Info)
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -65,7 +64,8 @@ fun AppNavigation(
     onInstallPlugin: (PluginRegistryEntry) -> Unit,
     onUninstallPlugin: (PluginRegistryEntry) -> Unit,
     onStartRpc: () -> Unit,
-    onStopRpc: () -> Unit
+    onStopRpc: () -> Unit,
+    onOpenSettings: () -> Unit
 ) {
     val navController = rememberNavController()
     val backStackEntry by navController.currentBackStackEntryAsState()
@@ -87,14 +87,33 @@ fun AppNavigation(
                             else -> "PresenceHub"
                         }
                     )
+                },
+                actions = {
+                    if (currentRoute == Routes.HOME) {
+                        IconButton(onClick = { navController.navigate(Routes.STORE) }) {
+                            Icon(
+                                imageVector = Icons.Default.Add,
+                                contentDescription = "Open Plugin Store"
+                            )
+                        }
+                    }
+
+                    IconButton(onClick = onOpenSettings) {
+                        Icon(
+                            imageVector = Icons.Default.Settings,
+                            contentDescription = "Settings"
+                        )
+                    }
                 }
             )
         },
         bottomBar = {
             NavigationBar {
                 bottomItems.forEach { item ->
+                    val selected = currentRoute == item.route
+
                     NavigationBarItem(
-                        selected = currentRoute == item.route,
+                        selected = selected,
                         onClick = {
                             if (currentRoute != item.route) {
                                 navController.navigate(item.route) {
@@ -125,14 +144,13 @@ fun AppNavigation(
             startDestination = Routes.HOME,
             modifier = Modifier.padding(paddingValues)
         ) {
-
             composable(Routes.HOME) {
                 HomeScreen(
                     storeState = storeState,
                     onOpenStore = { navController.navigate(Routes.STORE) },
                     onOpenAccount = { navController.navigate(Routes.ACCOUNT) },
                     onOpenAbout = { navController.navigate(Routes.ABOUT) },
-                    onOpenSettings = { navController.navigate(Routes.SETTINGS) }
+                    onOpenSettings = onOpenSettings
                 )
             }
 
