@@ -20,6 +20,7 @@ fun PresenceHubApp(
         onInstallPlugin = onInstallPlugin,
         onUninstallPlugin = onUninstallPlugin,
         onStartRpc = onStartRpc,
-        onStopRpc = onStopRpc
+        onStopRpc = onStopRpc,
+        onOpenSettings = { }
     )
 }
