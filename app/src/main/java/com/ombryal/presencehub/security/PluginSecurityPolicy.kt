@@ -3,7 +3,6 @@ package com.ombryal.presencehub.security
 import com.ombryal.presencehub.plugins.PluginRegistryEntry
 
 object PluginSecurityPolicy {
-
     const val CURRENT_API_VERSION = 1
 
     fun isApiCompatible(entry: PluginRegistryEntry): Boolean {

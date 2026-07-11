@@ -15,18 +15,30 @@ class PluginTrustManager {
         entry: PluginRegistryEntry,
         publicKeyPem: String
     ): Boolean {
-        if (entry.checksumSha256.isNullOrBlank()) return false
-        if (entry.signature.isNullOrBlank()) return false
+        val hasChecksum = !entry.checksumSha256.isNullOrBlank()
+        val hasSignature = !entry.signature.isNullOrBlank()
+        val hasPublicKey = publicKeyPem.isNotBlank()
 
-        val checksumOk = ChecksumValidator.matches(pluginBytes, entry.checksumSha256)
-        if (!checksumOk) return false
+        if (!hasChecksum && !hasSignature) {
+            return false
+        }
 
-        val signatureOk = SignatureVerifier.verifySignature(
-            pluginData = pluginBytes,
-            signature = entry.signature.toByteArray(),
-            publicKeyPem = publicKeyPem
-        )
+        if (hasChecksum && !ChecksumValidator.matches(pluginBytes, entry.checksumSha256!!)) {
+            return false
+        }
 
-        return signatureOk
+        if (hasSignature) {
+            if (!hasPublicKey) {
+                return false
+            }
+
+            return SignatureVerifier.verifySignature(
+                pluginData = pluginBytes,
+                signature = entry.signature!!.toByteArray(),
+                publicKeyPem = publicKeyPem
+            )
+        }
+
+        return true
     }
 }

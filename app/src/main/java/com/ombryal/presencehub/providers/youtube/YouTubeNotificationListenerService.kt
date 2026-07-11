@@ -20,6 +20,8 @@ class YouTubeNotificationListenerService : NotificationListenerService() {
         if (sbn.packageName != YOUTUBE_PACKAGE) return
 
         val notification = sbn.notification
+        if (!YouTubeNotificationParser.isLikelyYouTubeMedia(notification)) return
+
         val title = YouTubeNotificationParser.parseTitle(notification) ?: return
         val channel = YouTubeNotificationParser.parseChannel(notification)
 

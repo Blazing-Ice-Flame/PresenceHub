@@ -5,6 +5,7 @@ data class PluginRegistryEntry(
     val name: String,
     val version: String,
     val apiVersion: Int,
+    val author: String,
     val downloadUrl: String,
     val checksumSha256: String? = null,
     val signature: String? = null,

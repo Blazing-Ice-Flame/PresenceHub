@@ -39,15 +39,15 @@ fun HomeScreen(
                 modifier = Modifier.padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(6.dp)
             ) {
-                Text(text = "Current Status", style = MaterialTheme.typography.titleMedium)
+                Text(text = "Status", style = MaterialTheme.typography.titleMedium)
                 Text(text = "Installed plugins: $pluginCount")
-                Text(text = "Only YouTube is supported in v1.")
+                Text(text = "YouTube is the only supported provider in v1.")
             }
         }
 
-        Button(onClick = onOpenAddApp) { Text("Open Plugin Store") }
-        Button(onClick = onOpenSettings) { Text("Settings") }
-        Button(onClick = onOpenAccount) { Text("Account") }
-        Button(onClick = onOpenAbout) { Text("About") }
+        Button(onClick = onOpenAddApp) { Text(text = "Open Plugin Store") }
+        Button(onClick = onOpenSettings) { Text(text = "Settings") }
+        Button(onClick = onOpenAccount) { Text(text = "Account") }
+        Button(onClick = onOpenAbout) { Text(text = "About") }
     }
 }

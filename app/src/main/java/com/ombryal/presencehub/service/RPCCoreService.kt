@@ -39,6 +39,7 @@ class RPCCoreService : Service() {
         stopPolling()
 
         val app = application as DiscordRPCHubApp
+        app.rpcManager.clearPresence()
         app.rpcManager.disconnect()
 
         super.onDestroy()

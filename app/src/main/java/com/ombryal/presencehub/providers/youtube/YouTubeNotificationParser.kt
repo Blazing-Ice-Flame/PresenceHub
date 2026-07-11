@@ -5,8 +5,11 @@ import android.app.Notification
 object YouTubeNotificationParser {
 
     fun parseTitle(notification: Notification): String? {
-        val extras = notification.extras
-        return extras.getCharSequence(Notification.EXTRA_TITLE)?.toString()?.trim()
+        return notification.extras
+            .getCharSequence(Notification.EXTRA_TITLE)
+            ?.toString()
+            ?.trim()
+            ?.takeIf { it.isNotBlank() }
     }
 
     fun parseChannel(notification: Notification): String? {
@@ -19,5 +22,12 @@ object YouTubeNotificationParser {
             !text.isNullOrBlank() -> text
             else -> null
         }
+    }
+
+    fun isLikelyYouTubeMedia(notification: Notification): Boolean {
+        val extras = notification.extras
+        val title = extras.getCharSequence(Notification.EXTRA_TITLE)?.toString()?.trim().orEmpty()
+        val text = extras.getCharSequence(Notification.EXTRA_TEXT)?.toString()?.trim().orEmpty()
+        return title.isNotBlank() || text.isNotBlank()
     }
 }

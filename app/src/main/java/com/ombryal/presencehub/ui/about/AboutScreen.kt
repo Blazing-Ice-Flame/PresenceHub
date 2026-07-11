@@ -25,15 +25,19 @@ fun AboutScreen(
         Text(text = "About", style = MaterialTheme.typography.headlineLarge)
 
         Card {
-            Column(modifier = Modifier.padding(16.dp)) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
                 Text(text = "PresenceHub")
                 Text(text = "A modular Discord Rich Presence client for Android.")
                 Text(text = "Built by Ombryal.")
+                Text(text = "Version 1.0.0")
             }
         }
 
         Button(onClick = onBack) {
-            Text("Back")
+            Text(text = "Back")
         }
     }
 }

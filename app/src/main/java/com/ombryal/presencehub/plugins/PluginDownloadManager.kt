@@ -1,6 +1,5 @@
 package com.ombryal.presencehub.plugins
 
-import java.io.BufferedOutputStream
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
 import java.net.HttpURLConnection
@@ -11,6 +10,11 @@ class PluginDownloadManager {
     fun downloadBytes(downloadUrl: String): ByteArray? {
         return try {
             val connection = openConnection(downloadUrl)
+            if (connection.responseCode !in 200..299) {
+                connection.disconnect()
+                return null
+            }
+
             connection.inputStream.use { input ->
                 readAllBytes(input)
             }

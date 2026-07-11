@@ -27,22 +27,25 @@ fun AccountScreen(
         Text(text = "Account", style = MaterialTheme.typography.headlineLarge)
 
         Card {
-            Column(modifier = Modifier.padding(16.dp)) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
                 Text(text = "Discord connection status")
                 Text(text = "Not connected")
             }
         }
 
         Button(onClick = onStartRpc) {
-            Text("Start RPC Service")
+            Text(text = "Start RPC Service")
         }
 
         Button(onClick = onStopRpc) {
-            Text("Stop RPC Service")
+            Text(text = "Stop RPC Service")
         }
 
         Button(onClick = onBack) {
-            Text("Back")
+            Text(text = "Back")
         }
     }
 }

@@ -32,7 +32,7 @@ fun AddAppScreen(
         Text(text = "Plugin Store", style = MaterialTheme.typography.headlineLarge)
 
         Button(onClick = onRefresh) {
-            Text("Refresh Store")
+            Text(text = "Refresh Store")
         }
 
         if (isLoading) {
@@ -51,6 +51,7 @@ fun AddAppScreen(
                 ) {
                     Text(text = plugin.name, style = MaterialTheme.typography.titleMedium)
                     Text(text = "Version: ${plugin.version}")
+                    Text(text = "API Version: ${plugin.apiVersion}")
                     Text(text = if (plugin.verified) "Verified" else "Unverified")
                     Text(text = if (plugin.installed) "Installed" else "Not installed")
                     plugin.installedVersion?.let { Text(text = "Installed version: $it") }
@@ -60,16 +61,16 @@ fun AddAppScreen(
                     plugin.description?.let { Text(text = it) }
 
                     Button(onClick = { onOpenDetails(plugin) }) {
-                        Text("Details")
+                        Text(text = "Details")
                     }
 
                     if (plugin.updateAvailable) {
                         Button(onClick = { onInstall(plugin) }) {
-                            Text("Update")
+                            Text(text = "Update")
                         }
                     } else if (!plugin.installed) {
                         Button(onClick = { onInstall(plugin) }) {
-                            Text("Install")
+                            Text(text = "Install")
                         }
                     }
                 }
@@ -81,7 +82,7 @@ fun AddAppScreen(
         }
 
         Button(onClick = onBack) {
-            Text("Back")
+            Text(text = "Back")
         }
     }
 }

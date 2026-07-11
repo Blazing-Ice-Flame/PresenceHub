@@ -50,21 +50,21 @@ fun PluginDetailsScreen(
         if (plugin.installed) {
             if (plugin.updateAvailable) {
                 Button(onClick = { onInstall(plugin) }) {
-                    Text("Update")
+                    Text(text = "Update")
                 }
             }
 
             Button(onClick = { onUninstall(plugin) }) {
-                Text("Uninstall")
+                Text(text = "Uninstall")
             }
         } else {
             Button(onClick = { onInstall(plugin) }) {
-                Text("Install")
+                Text(text = "Install")
             }
         }
 
         Button(onClick = onBack) {
-            Text("Back")
+            Text(text = "Back")
         }
     }
 }

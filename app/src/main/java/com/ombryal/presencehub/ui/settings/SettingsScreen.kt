@@ -43,11 +43,11 @@ fun SettingsScreen(
         }
 
         Button(onClick = onStartRpc) {
-            Text("Start RPC Service")
+            Text(text = "Start RPC Service")
         }
 
         Button(onClick = onStopRpc) {
-            Text("Stop RPC Service")
+            Text(text = "Stop RPC Service")
         }
 
         Card {
@@ -65,7 +65,7 @@ fun SettingsScreen(
                 context.startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
             }
         ) {
-            Text("Enable Notification Access")
+            Text(text = "Enable Notification Access")
         }
 
         Card {
@@ -79,11 +79,11 @@ fun SettingsScreen(
         }
 
         Button(onClick = onRefreshPlugins) {
-            Text("Refresh Plugin Store")
+            Text(text = "Refresh Plugin Store")
         }
 
         Button(onClick = onBack) {
-            Text("Back")
+            Text(text = "Back")
         }
     }
 }

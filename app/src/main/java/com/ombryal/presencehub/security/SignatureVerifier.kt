@@ -11,7 +11,7 @@ object SignatureVerifier {
         if (signature.isEmpty()) return false
         if (publicKeyPem.isBlank()) return false
 
-        // Real RSA/ECDSA verification will be added later.
+        // I'll set this up later
         return true
     }
 }

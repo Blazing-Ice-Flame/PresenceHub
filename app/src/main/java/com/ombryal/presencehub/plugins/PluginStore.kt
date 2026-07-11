@@ -20,6 +20,7 @@ class PluginStore(
                 name = remote.name,
                 version = remote.version,
                 apiVersion = remote.apiVersion,
+                author = remote.author,
                 downloadUrl = remote.packageUrl,
                 checksumSha256 = null,
                 signature = null,
