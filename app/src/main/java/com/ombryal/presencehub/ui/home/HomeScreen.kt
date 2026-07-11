@@ -45,9 +45,9 @@ fun HomeScreen(
             }
         }
 
-        Button(onClick = onOpenAddApp) { Text("Open Plugin Store") }
-        Button(onClick = onOpenSettings) { Text("Settings") }
-        Button(onClick = onOpenAccount) { Text("Account") }
-        Button(onClick = onOpenAbout) { Text("About") }
+        Button(onClick = onOpenAddApp) { Text(text = "Open Plugin Store") }
+        Button(onClick = onOpenSettings) { Text(text = "Settings") }
+        Button(onClick = onOpenAccount) { Text(text = "Account") }
+        Button(onClick = onOpenAbout) { Text(text = "About") }
     }
 }
