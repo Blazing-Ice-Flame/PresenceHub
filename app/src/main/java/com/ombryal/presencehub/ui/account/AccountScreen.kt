@@ -2,50 +2,76 @@ package com.ombryal.presencehub.ui.account
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
 @Composable
 fun AccountScreen(
-    onBack: () -> Unit,
     onStartRpc: () -> Unit,
     onStopRpc: () -> Unit
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
-        Text(text = "Account", style = MaterialTheme.typography.headlineLarge)
-
-        Card {
-            Column(
-                modifier = Modifier.padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(6.dp)
-            ) {
-                Text(text = "Discord connection status")
-                Text(text = "Not connected")
+        item {
+            ElevatedCard(modifier = Modifier.fillMaxWidth()) {
+                Column(
+                    modifier = Modifier.padding(20.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(
+                        text = "Discord connection",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(text = "Status: Not connected")
+                    Text(text = "Use the service controls below to start RPC.")
+                }
             }
         }
 
-        Button(onClick = onStartRpc) {
-            Text(text = "Start RPC Service")
-        }
+        item {
+            Card(modifier = Modifier.fillMaxWidth()) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    Text(
+                        text = "Service controls",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.SemiBold
+                    )
 
-        Button(onClick = onStopRpc) {
-            Text(text = "Stop RPC Service")
-        }
+                    Button(
+                        onClick = onStartRpc,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(text = "Start RPC Service")
+                    }
 
-        Button(onClick = onBack) {
-            Text(text = "Back")
+                    OutlinedButton(
+                        onClick = onStopRpc,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(text = "Stop RPC Service")
+                    }
+                }
+            }
         }
     }
 }
