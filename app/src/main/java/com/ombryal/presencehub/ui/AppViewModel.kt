@@ -4,12 +4,12 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.ombryal.presencehub.DiscordRPCHubApp
+import com.ombryal.presencehub.data.models.Presence
 import com.ombryal.presencehub.plugins.InstalledPluginRegistry
 import com.ombryal.presencehub.plugins.PluginInstallManager
 import com.ombryal.presencehub.plugins.PluginRegistryEntry
 import com.ombryal.presencehub.plugins.PluginStore
 import com.ombryal.presencehub.plugins.PluginStoreState
-import com.ombryal.presencehub.rpc.Presence
 import com.ombryal.presencehub.ui.account.AccountUiState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
