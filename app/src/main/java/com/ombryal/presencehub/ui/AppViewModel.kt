@@ -10,6 +10,7 @@ import com.ombryal.presencehub.plugins.PluginInstallManager
 import com.ombryal.presencehub.plugins.PluginRegistryEntry
 import com.ombryal.presencehub.plugins.PluginStore
 import com.ombryal.presencehub.plugins.PluginStoreState
+import com.ombryal.presencehub.rpc.RPCManager
 import com.ombryal.presencehub.ui.account.AccountUiState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -29,6 +30,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     )
 
     private val app get() = getApplication<DiscordRPCHubApp>()
+    private val rpcManager: RPCManager get() = app.rpcManager
 
     private val _storeState = MutableStateFlow(PluginStoreState(isLoading = true))
     val storeState: StateFlow<PluginStoreState> = _storeState.asStateFlow()
@@ -84,15 +86,15 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
 
     fun startRpc() {
         viewModelScope.launch(Dispatchers.IO) {
-            app.rpcManager.connect()
+            rpcManager.connect()
             updateAccountState()
         }
     }
 
     fun stopRpc() {
         viewModelScope.launch(Dispatchers.IO) {
-            app.rpcManager.clearPresence()
-            app.rpcManager.disconnect()
+            rpcManager.clearPresence()
+            rpcManager.disconnect()
             updateAccountState()
         }
     }
@@ -108,7 +110,6 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     private fun updateAccountState() {
-        val rpcManager = app.rpcManager
         val connected = rpcManager.isConnected()
         val presence = rpcManager.getCurrentPresence()
 
@@ -131,8 +132,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     private fun formatTime(presence: Presence): String {
         return if (presence.startTimestamp != null && presence.endTimestamp != null) {
             val elapsed = maxOf(0L, System.currentTimeMillis() - presence.startTimestamp)
-            val remaining = maxOf(0L, presence.endTimestamp - System.currentTimeMillis())
-            val total = elapsed + remaining
+            val total = maxOf(0L, presence.endTimestamp - presence.startTimestamp)
             "${formatMillis(elapsed)} / ${formatMillis(total)}"
         } else {
             "00:00 / 00:00"
