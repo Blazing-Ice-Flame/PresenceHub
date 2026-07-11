@@ -1,15 +1,17 @@
 package com.ombryal.presencehub.plugins
 
 class PluginDetailsRepository(
-    private val manifestRepository: RemotePluginManifestRepository = RemotePluginManifestRepository()
+    private val remoteManifestRepository: RemotePluginManifestRepository = RemotePluginManifestRepository()
 ) {
 
     fun fetchDetails(plugin: PluginRegistryEntry): PluginPackageManifest? {
-        if (plugin.downloadUrl.isBlank()) return null
-
         val manifestUrl = plugin.downloadUrl
             .replace("plugin.apk", "manifest.json")
 
-        return manifestRepository.fetchManifest(manifestUrl)
+        return if (manifestUrl.isNotBlank()) {
+            remoteManifestRepository.fetchManifest(manifestUrl)
+        } else {
+            null
+        }
     }
 }
