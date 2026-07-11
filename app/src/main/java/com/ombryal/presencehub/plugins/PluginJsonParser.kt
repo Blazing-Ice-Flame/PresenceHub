@@ -34,10 +34,10 @@ object PluginJsonParser {
             version = obj.optString("version"),
             apiVersion = obj.optInt("apiVersion", 1),
             author = obj.optString("author", "Unknown"),
-            downloadUrl = obj.optString("packageUrl", obj.optString("downloadUrl")),
-            checksumSha256 = obj.optString("checksumSha256", null),
-            signature = obj.optString("signature", null),
-            description = obj.optString("description", null),
+            downloadUrl = obj.optString("packageUrl").ifBlank { obj.optString("downloadUrl") },
+            checksumSha256 = obj.optString("checksumSha256").takeIf { it.isNotBlank() },
+            signature = obj.optString("signature").takeIf { it.isNotBlank() },
+            description = obj.optString("description").takeIf { it.isNotBlank() },
             verified = obj.optBoolean("verified", false)
         )
     }
