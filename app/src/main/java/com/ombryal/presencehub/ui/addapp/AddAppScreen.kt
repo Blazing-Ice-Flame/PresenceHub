@@ -51,6 +51,7 @@ fun AddAppScreen(
                 ) {
                     Text(text = plugin.name, style = MaterialTheme.typography.titleMedium)
                     Text(text = "Version: ${plugin.version}")
+                    Text(text = "API Version: ${plugin.apiVersion}")
                     Text(text = if (plugin.verified) "Verified" else "Unverified")
                     Text(text = if (plugin.installed) "Installed" else "Not installed")
                     plugin.installedVersion?.let { Text(text = "Installed version: $it") }
