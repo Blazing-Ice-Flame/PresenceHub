@@ -37,7 +37,7 @@ fun AboutScreen(
         }
 
         Button(onClick = onBack) {
-            Text("Back")
+            Text(text = "Back")
         }
     }
 }
