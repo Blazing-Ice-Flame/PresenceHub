@@ -1,12 +1,27 @@
 package com.ombryal.presencehub.navigation
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.People
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Storefront
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.ombryal.presencehub.plugins.PluginRegistryEntry
 import com.ombryal.presencehub.plugins.PluginStoreState
@@ -19,12 +34,26 @@ import com.ombryal.presencehub.ui.settings.SettingsScreen
 
 object Routes {
     const val HOME = "home"
+    const val STORE = "store"
     const val ACCOUNT = "account"
     const val ABOUT = "about"
     const val SETTINGS = "settings"
-    const val ADD_APP = "add_app"
     const val PLUGIN_DETAILS = "plugin_details"
 }
+
+private data class BottomItem(
+    val route: String,
+    val label: String,
+    val icon: androidx.compose.ui.graphics.vector.ImageVector
+)
+
+private val bottomItems = listOf(
+    BottomItem(Routes.HOME, "Home", Icons.Default.Home),
+    BottomItem(Routes.STORE, "Store", Icons.Default.Storefront),
+    BottomItem(Routes.ACCOUNT, "Account", Icons.Default.Person),
+    BottomItem(Routes.ABOUT, "About", Icons.Default.Info),
+    BottomItem(Routes.SETTINGS, "Settings", Icons.Default.Settings),
+)
 
 @Composable
 fun AppNavigation(
@@ -36,69 +65,123 @@ fun AppNavigation(
     onStopRpc: () -> Unit
 ) {
     val navController = rememberNavController()
+    val backStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = backStackEntry?.destination?.route ?: Routes.HOME
     var selectedPlugin by remember { mutableStateOf<PluginRegistryEntry?>(null) }
 
-    NavHost(
-        navController = navController,
-        startDestination = Routes.HOME
-    ) {
-        composable(Routes.HOME) {
-            HomeScreen(
-                pluginCount = storeState.plugins.size,
-                onOpenAccount = { navController.navigate(Routes.ACCOUNT) },
-                onOpenAbout = { navController.navigate(Routes.ABOUT) },
-                onOpenSettings = { navController.navigate(Routes.SETTINGS) },
-                onOpenAddApp = { navController.navigate(Routes.ADD_APP) }
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = {
+                    Text(
+                        text = when (currentRoute) {
+                            Routes.HOME -> "PresenceHub"
+                            Routes.STORE -> "Plugin Store"
+                            Routes.ACCOUNT -> "Account"
+                            Routes.ABOUT -> "About"
+                            Routes.SETTINGS -> "Settings"
+                            Routes.PLUGIN_DETAILS -> "Plugin Details"
+                            else -> "PresenceHub"
+                        }
+                    )
+                }
             )
+        },
+        bottomBar = {
+            NavigationBar {
+                bottomItems.forEach { item ->
+                    val selected = currentRoute == item.route
+                    NavigationBarItem(
+                        selected = selected,
+                        onClick = {
+                            if (currentRoute != item.route) {
+                                navController.navigate(item.route) {
+                                    popUpTo(navController.graph.findStartDestination().id) {
+                                        saveState = true
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
+                            }
+                        },
+                        icon = { Icon(item.icon, contentDescription = item.label) },
+                        label = { Text(item.label) }
+                    )
+                }
+            }
         }
-
-        composable(Routes.ACCOUNT) {
-            AccountScreen(
-                onBack = { navController.popBackStack() },
-                onStartRpc = onStartRpc,
-                onStopRpc = onStopRpc
-            )
-        }
-
-        composable(Routes.ABOUT) {
-            AboutScreen(
-                onBack = { navController.popBackStack() }
-            )
-        }
-
-        composable(Routes.SETTINGS) {
-            SettingsScreen(
-                onBack = { navController.popBackStack() },
-                onStartRpc = onStartRpc,
-                onStopRpc = onStopRpc,
-                onRefreshPlugins = onRefreshPlugins
-            )
-        }
-
-        composable(Routes.ADD_APP) {
-            AddAppScreen(
-                availablePlugins = storeState.plugins,
-                isLoading = storeState.isLoading,
-                errorMessage = storeState.errorMessage,
-                onRefresh = onRefreshPlugins,
-                onInstall = onInstallPlugin,
-                onOpenDetails = { plugin ->
-                    selectedPlugin = plugin
-                    navController.navigate(Routes.PLUGIN_DETAILS)
-                },
-                onBack = { navController.popBackStack() }
-            )
-        }
-
-        composable(Routes.PLUGIN_DETAILS) {
-            val plugin = selectedPlugin
-            if (plugin != null) {
-                PluginDetailsScreen(
-                    plugin = plugin,
-                    onInstall = onInstallPlugin,
-                    onUninstall = onUninstallPlugin,
-                    onBack = { navController.popBackStack() }
+    ) { paddingValues ->
+        NavHost(
+            navController = navController,
+            startDestination = Routes.HOME,
+            modifier = androidx.compose.ui.Modifier.padding(paddingValues)
+        ) {
+            composable(Routes.HOME) {
+                HomeScreen(
+                    storeState = storeState,
+                    onOpenStore = {
+                        navController.navigate(Routes.STORE)
+                    },
+                    onOpenAccount = {
+                        navController.navigate(Routes.ACCOUNT)
+                    },
+                    onOpenAbout = {
+                        navController.navigate(Routes.ABOUT)
+                    },
+                    onOpenSettings = {
+                        navController.navigate(Routes.SETTINGS)
+                    }
                 )
+            }
+
+            composable(Routes.STORE) {
+                AddAppScreen(
+                    availablePlugins = storeState.plugins,
+                    isLoading = storeState.isLoading,
+                    errorMessage = storeState.errorMessage,
+                    onRefresh = onRefreshPlugins,
+                    onInstall = onInstallPlugin,
+                    onOpenDetails = { plugin ->
+                        selectedPlugin = plugin
+                        navController.navigate(Routes.PLUGIN_DETAILS)
+                    },
+                    onBack = {
+                        navController.popBackStack()
+                    }
+                )
+            }
+
+            composable(Routes.ACCOUNT) {
+                AccountScreen(
+                    onStartRpc = onStartRpc,
+                    onStopRpc = onStopRpc
+                )
+            }
+
+            composable(Routes.ABOUT) {
+                AboutScreen()
+            }
+
+            composable(Routes.SETTINGS) {
+                SettingsScreen(
+                    onStartRpc = onStartRpc,
+                    onStopRpc = onStopRpc,
+                    onRefreshPlugins = onRefreshPlugins
+                )
+            }
+
+            composable(Routes.PLUGIN_DETAILS) {
+                val plugin = selectedPlugin
+                if (plugin != null) {
+                    PluginDetailsScreen(
+                        plugin = plugin,
+                        onInstall = onInstallPlugin,
+                        onUninstall = onUninstallPlugin,
+                        onBack = {
+                            navController.popBackStack()
+                        }
+                    )
+                }
             }
         }
     }
