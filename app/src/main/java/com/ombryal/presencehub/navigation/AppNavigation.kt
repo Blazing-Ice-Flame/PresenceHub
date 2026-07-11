@@ -1,5 +1,6 @@
 package com.ombryal.presencehub.navigation
 
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
@@ -20,7 +21,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
@@ -111,10 +111,8 @@ fun AppNavigation(
         bottomBar = {
             NavigationBar {
                 bottomItems.forEach { item ->
-                    val selected = currentRoute == item.route
-
                     NavigationBarItem(
-                        selected = selected,
+                        selected = currentRoute == item.route,
                         onClick = {
                             if (currentRoute != item.route) {
                                 navController.navigate(item.route) {
