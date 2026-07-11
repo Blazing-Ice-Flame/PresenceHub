@@ -21,12 +21,10 @@ class PluginTrustManager {
         val checksumOk = ChecksumValidator.matches(pluginBytes, entry.checksumSha256)
         if (!checksumOk) return false
 
-        val signatureOk = SignatureVerifier.verifySignature(
+        return SignatureVerifier.verifySignature(
             pluginData = pluginBytes,
             signature = entry.signature.toByteArray(),
             publicKeyPem = publicKeyPem
         )
-
-        return signatureOk
     }
 }
