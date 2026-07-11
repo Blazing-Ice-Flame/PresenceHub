@@ -39,9 +39,144 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun AccountScreen(
+    state: AccountUiState,
     onStartRpc: () -> Unit,
     onStopRpc: () -> Unit
 ) {
+    if (!state.connected) {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp)
+        ) {
+            item {
+                ElevatedCard(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(22.dp)
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(14.dp)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(74.dp)
+                                .clip(CircleShape)
+                                .background(Color(0xFF1B1830)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            androidx.compose.material3.Icon(
+                                imageVector = Icons.Default.Person,
+                                contentDescription = null,
+                                tint = Color(0xFFB9A6FF),
+                                modifier = Modifier.size(38.dp)
+                            )
+                        }
+
+                        Column(
+                            modifier = Modifier.weight(1f),
+                            verticalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            Text(
+                                text = state.displayName,
+                                style = MaterialTheme.typography.titleLarge,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Text(
+                                text = state.handle,
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                            ) {
+                                androidx.compose.material3.Icon(
+                                    imageVector = Icons.Default.Check,
+                                    contentDescription = null,
+                                    tint = Color(0xFF8A8A8A),
+                                    modifier = Modifier.size(16.dp)
+                                )
+                                Text(
+                                    text = "Not connected",
+                                    style = MaterialTheme.typography.labelLarge,
+                                    color = Color(0xFF8A8A8A)
+                                )
+                            }
+
+                            Text(
+                                text = "Connect Discord to view Rich Presence.",
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
+
+                        androidx.compose.material3.Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                            contentDescription = null
+                        )
+                    }
+                }
+            }
+
+            item {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(22.dp)
+                ) {
+                    Column(
+                        modifier = Modifier.padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        Text(
+                            text = "Connection",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            text = "Discord is currently disconnected.",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(10.dp)
+                        ) {
+                            OutlinedButton(
+                                onClick = onStartRpc,
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                androidx.compose.material3.Icon(
+                                    imageVector = Icons.Default.Refresh,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                                Spacer(modifier = Modifier.size(8.dp))
+                                Text("Reconnect")
+                            }
+
+                            OutlinedButton(
+                                onClick = onStopRpc,
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                androidx.compose.material3.Icon(
+                                    imageVector = Icons.Default.Link,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                                Spacer(modifier = Modifier.size(8.dp))
+                                Text("Disconnect")
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return
+    }
+
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(16.dp),
@@ -79,12 +214,12 @@ fun AccountScreen(
                         verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         Text(
-                            text = "VoidDev",
+                            text = state.displayName,
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold
                         )
                         Text(
-                            text = "voiddev_ #1337",
+                            text = state.handle,
                             style = MaterialTheme.typography.bodyMedium
                         )
 
@@ -106,7 +241,7 @@ fun AccountScreen(
                         }
 
                         Text(
-                            text = "Discord is connected and RPC is active.",
+                            text = "Discord is connected and Rich Presence is active.",
                             style = MaterialTheme.typography.bodySmall
                         )
                     }
@@ -122,7 +257,7 @@ fun AccountScreen(
         item {
             SectionCard(
                 title = "Rich Presence Status",
-                trailingText = "Active"
+                trailingText = state.liveStatus
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -149,16 +284,16 @@ fun AccountScreen(
                         verticalArrangement = Arrangement.spacedBy(2.dp)
                     ) {
                         Text(
-                            text = "YouTube",
+                            text = state.activeProvider,
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold
                         )
                         Text(
-                            text = "How to Build a Discord Bot",
+                            text = state.activeTitle,
                             style = MaterialTheme.typography.bodyMedium
                         )
                         Text(
-                            text = "00:04 / 12:38",
+                            text = state.activeTime,
                             style = MaterialTheme.typography.labelLarge
                         )
                     }
@@ -192,8 +327,7 @@ fun AccountScreen(
                         androidx.compose.material3.Icon(
                             imageVector = Icons.Default.Link,
                             contentDescription = null,
-                            modifier = Modifier.size(18.dp)
-                        )
+                            modifier = Modifier.size(18.dp))
                         Spacer(modifier = Modifier.size(8.dp))
                         Text("Disconnect")
                     }
@@ -209,10 +343,9 @@ fun AccountScreen(
 
         item {
             SectionCard(title = "Permissions") {
-                PermissionRow("Access your username, avatar, and server information", true)
-                PermissionRow("Update your Rich Presence", true)
-                PermissionRow("Access images for thumbnails and large/small images", true)
-                PermissionRow("Open links (YouTube, Channels, etc.)", true)
+                state.permissions.forEach { permission ->
+                    PermissionRow(permission.label, permission.granted)
+                }
             }
         }
     }
