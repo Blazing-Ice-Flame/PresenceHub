@@ -222,9 +222,7 @@ fun AccountScreen(
                 }
             }
 
-            SectionCard(
-                title = "Connection"
-            ) {
+            SectionCard(title = "Connection") {
                 Text(
                     text = "Maintain a stable connection to keep RPC active.",
                     style = MaterialTheme.typography.bodyMedium,
@@ -273,9 +271,7 @@ fun AccountScreen(
                 )
             }
 
-            SectionCard(
-                title = "Permissions"
-            ) {
+            SectionCard(title = "Permissions") {
                 Text(
                     text = "This app is allowed to:",
                     style = MaterialTheme.typography.bodySmall,
@@ -293,9 +289,7 @@ fun AccountScreen(
             }
 
             if (state.connected) {
-                SectionCard(
-                    title = "RPC Preview"
-                ) {
+                SectionCard(title = "RPC Preview") {
                     Card(
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(18.dp),
