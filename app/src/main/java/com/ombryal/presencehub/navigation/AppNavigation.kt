@@ -65,8 +65,7 @@ fun AppNavigation(
     onInstallPlugin: (PluginRegistryEntry) -> Unit,
     onUninstallPlugin: (PluginRegistryEntry) -> Unit,
     onStartRpc: () -> Unit,
-    onStopRpc: () -> Unit,
-    onOpenSettings: () -> Unit
+    onStopRpc: () -> Unit
 ) {
     val navController = rememberNavController()
     val backStackEntry by navController.currentBackStackEntryAsState()
@@ -99,7 +98,7 @@ fun AppNavigation(
                         }
                     }
 
-                    IconButton(onClick = onOpenSettings) {
+                    IconButton(onClick = { navController.navigate(Routes.SETTINGS) }) {
                         Icon(
                             imageVector = Icons.Default.Settings,
                             contentDescription = "Settings"
@@ -149,7 +148,7 @@ fun AppNavigation(
                     onOpenStore = { navController.navigate(Routes.STORE) },
                     onOpenAccount = { navController.navigate(Routes.ACCOUNT) },
                     onOpenAbout = { navController.navigate(Routes.ABOUT) },
-                    onOpenSettings = onOpenSettings
+                    onOpenSettings = { navController.navigate(Routes.SETTINGS) }
                 )
             }
 
