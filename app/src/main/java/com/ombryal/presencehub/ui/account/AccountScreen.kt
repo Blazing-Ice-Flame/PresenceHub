@@ -16,7 +16,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Link
 import androidx.compose.material.icons.filled.Person
@@ -45,37 +45,42 @@ fun AccountScreen(
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
         item {
             ElevatedCard(
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(24.dp)
+                shape = RoundedCornerShape(22.dp)
             ) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(18.dp),
+                        .padding(16.dp),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    horizontalArrangement = Arrangement.spacedBy(14.dp)
                 ) {
                     Box(
                         modifier = Modifier
-                            .size(88.dp)
+                            .size(74.dp)
                             .clip(CircleShape)
                             .background(Color(0xFF1B1830)),
                         contentAlignment = Alignment.Center
                     ) {
-                        IconLikePerson()
+                        androidx.compose.material3.Icon(
+                            imageVector = Icons.Default.Person,
+                            contentDescription = null,
+                            tint = Color(0xFFB9A6FF),
+                            modifier = Modifier.size(38.dp)
+                        )
                     }
 
                     Column(
                         modifier = Modifier.weight(1f),
-                        verticalArrangement = Arrangement.spacedBy(6.dp)
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         Text(
                             text = "VoidDev",
-                            style = MaterialTheme.typography.headlineSmall,
+                            style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold
                         )
                         Text(
@@ -91,7 +96,7 @@ fun AccountScreen(
                                 imageVector = Icons.Default.Check,
                                 contentDescription = null,
                                 tint = Color(0xFF2EE58D),
-                                modifier = Modifier.size(18.dp)
+                                modifier = Modifier.size(16.dp)
                             )
                             Text(
                                 text = "Connected",
@@ -107,7 +112,7 @@ fun AccountScreen(
                     }
 
                     androidx.compose.material3.Icon(
-                        imageVector = Icons.Default.ArrowForward,
+                        imageVector = Icons.AUTOMIRRORED.Default.ArrowForward,
                         contentDescription = null
                     )
                 }
@@ -126,14 +131,14 @@ fun AccountScreen(
                 ) {
                     Box(
                         modifier = Modifier
-                            .size(54.dp)
+                            .size(46.dp)
                             .clip(CircleShape)
                             .background(Color(0xFFE0245E)),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
                             text = "▶",
-                            style = MaterialTheme.typography.titleLarge,
+                            style = MaterialTheme.typography.titleMedium,
                             color = Color.White,
                             fontWeight = FontWeight.Bold
                         )
@@ -141,38 +146,21 @@ fun AccountScreen(
 
                     Column(
                         modifier = Modifier.weight(1f),
-                        verticalArrangement = Arrangement.spacedBy(3.dp)
+                        verticalArrangement = Arrangement.spacedBy(2.dp)
                     ) {
                         Text(
                             text = "YouTube",
-                            style = MaterialTheme.typography.titleLarge,
+                            style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold
                         )
                         Text(
                             text = "How to Build a Discord Bot",
-                            style = MaterialTheme.typography.bodyLarge
+                            style = MaterialTheme.typography.bodyMedium
                         )
                         Text(
                             text = "00:04 / 12:38",
                             style = MaterialTheme.typography.labelLarge
                         )
-                    }
-
-                    Card(
-                        shape = RoundedCornerShape(16.dp),
-                        colors = CardDefaults.cardColors(containerColor = Color(0xFF161326))
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(width = 108.dp, height = 76.dp)
-                                .padding(8.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = "Preview",
-                                style = MaterialTheme.typography.labelMedium
-                            )
-                        }
                     }
                 }
             }
@@ -182,7 +170,7 @@ fun AccountScreen(
             SectionCard(title = "Connection") {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     OutlinedButton(
                         onClick = onStartRpc,
@@ -211,9 +199,9 @@ fun AccountScreen(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(2.dp))
                 Text(
-                    text = "Having issues? Try reconnecting your Discord account.",
+                    text = "Try reconnecting if Discord stops updating.",
                     style = MaterialTheme.typography.bodySmall
                 )
             }
@@ -225,68 +213,6 @@ fun AccountScreen(
                 PermissionRow("Update your Rich Presence", true)
                 PermissionRow("Access images for thumbnails and large/small images", true)
                 PermissionRow("Open links (YouTube, Channels, etc.)", true)
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Text(
-                    text = "Learn more about permissions",
-                    style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.primary
-                )
-            }
-        }
-
-        item {
-            SectionCard(title = "Discord RPC Preview") {
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(18.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color(0xFF18122D))
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(14.dp),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(62.dp)
-                                .clip(RoundedCornerShape(14.dp))
-                                .background(Color(0xFFE0245E)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = "YT",
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White
-                            )
-                        }
-
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                text = "WATCHING YOUTUBE",
-                                style = MaterialTheme.typography.labelMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                            Text(
-                                text = "How to Build a Discord Bot",
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold
-                            )
-                            Text(
-                                text = "Tech With Tim",
-                                style = MaterialTheme.typography.bodySmall
-                            )
-                            Text(
-                                text = "00:04 / 12:38",
-                                style = MaterialTheme.typography.bodySmall
-                            )
-                        }
-                    }
-                }
             }
         }
     }
@@ -300,11 +226,11 @@ private fun SectionCard(
 ) {
     ElevatedCard(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(24.dp)
+        shape = RoundedCornerShape(22.dp)
     ) {
         Column(
-            modifier = Modifier.padding(18.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -342,7 +268,8 @@ private fun PermissionRow(
         androidx.compose.material3.Icon(
             imageVector = Icons.Default.Tune,
             contentDescription = null,
-            tint = MaterialTheme.colorScheme.primary
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(18.dp)
         )
         Text(
             text = text,
@@ -352,17 +279,8 @@ private fun PermissionRow(
         androidx.compose.material3.Icon(
             imageVector = Icons.Default.Check,
             contentDescription = null,
-            tint = if (granted) Color(0xFF2EE58D) else MaterialTheme.colorScheme.error
+            tint = if (granted) Color(0xFF2EE58D) else MaterialTheme.colorScheme.error,
+            modifier = Modifier.size(18.dp)
         )
     }
-}
-
-@Composable
-private fun IconLikePerson() {
-    androidx.compose.material3.Icon(
-        imageVector = Icons.Default.Person,
-        contentDescription = null,
-        tint = Color(0xFFB9A6FF),
-        modifier = Modifier.size(46.dp)
-    )
 }
