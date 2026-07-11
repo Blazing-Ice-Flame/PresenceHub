@@ -10,4 +10,14 @@ object PluginPackageValidator {
                 manifest.author.isNotBlank() &&
                 manifest.packageUrl.isNotBlank()
     }
+
+    fun isRemotePackageValid(remote: RemotePluginPackage): Boolean {
+        return remote.pluginId.isNotBlank() &&
+                remote.name.isNotBlank() &&
+                remote.version.isNotBlank() &&
+                remote.apiVersion > 0 &&
+                remote.author.isNotBlank() &&
+                remote.manifestUrl.isNotBlank() &&
+                remote.packageUrl.isNotBlank()
+    }
 }
