@@ -112,7 +112,7 @@ fun AccountScreen(
                     }
 
                     androidx.compose.material3.Icon(
-                        imageVector = Icons.AUTOMIRRORED.Default.ArrowForward,
+                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                         contentDescription = null
                     )
                 }
