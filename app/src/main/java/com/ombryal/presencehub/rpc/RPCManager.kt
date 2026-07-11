@@ -17,6 +17,14 @@ class RPCManager(
         discordClient.disconnect()
     }
 
+    fun isConnected(): Boolean {
+        return discordClient.isConnected()
+    }
+
+    fun getCurrentPresence(): Presence? {
+        return currentPresence
+    }
+
     fun refreshPresence() {
         val newPresence = pluginManager.getCurrentPresence()
 
