@@ -45,7 +45,7 @@ fun FloatingGlassCapsule(
     BoxWithConstraints(
         modifier = modifier
             .fillMaxWidth(0.88f)
-            .padding(bottom = 36.dp)
+            .padding(bottom = 0.dp)   // no internal padding; position controlled externally
             .height(72.dp)
     ) {
         val pillWidth = maxWidth * 0.28f
@@ -55,7 +55,7 @@ fun FloatingGlassCapsule(
             animationSpec = tween(durationMillis = 350)
         )
 
-        // ---- Background layer (blurred glass) ----
+        // Background layer (blurred glass)
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -63,12 +63,12 @@ fun FloatingGlassCapsule(
                 .clip(RoundedCornerShape(36.dp))
                 .background(Color(0x30FFFFFF))
                 .border(1.dp, Color(0x33FFFFFF), RoundedCornerShape(36.dp))
-                .blur(2.dp)   // blur only this background, nothing above
+                .blur(2.dp)
         )
 
-        // ---- Foreground content (crisp icons & text) ----
+        // Foreground content
         Box(modifier = Modifier.fillMaxSize()) {
-            // Active pill highlight (soft glow behind the selected tab)
+            // Active pill highlight
             Box(
                 modifier = Modifier
                     .offset(x = pillOffsetX)
