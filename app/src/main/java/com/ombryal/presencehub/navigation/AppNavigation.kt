@@ -1,12 +1,18 @@
 package com.ombryal.presencehub.navigation
 
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -30,9 +36,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -122,7 +133,7 @@ fun AppNavigation(
             )
         },
         bottomBar = {
-            FloatingGlassBottomBar(
+            FloatingGlassCapsule(
                 currentRoute = currentRoute,
                 onNavigate = { route ->
                     if (route != currentRoute) {
@@ -208,26 +219,43 @@ fun AppNavigation(
 }
 
 @Composable
-private fun FloatingGlassBottomBar(
+private fun FloatingGlassCapsule(
     currentRoute: String,
     onNavigate: (String) -> Unit
 ) {
     val items = listOf(
-        Triple(Routes.ACCOUNT, "Account", Icons.Default.Person),
-        Triple(Routes.HOME, "Home", Icons.Default.Home),
-        Triple(Routes.ABOUT, "About", Icons.Default.Info)
+        TabItem(Routes.ACCOUNT, "Account", Icons.Default.Person),
+        TabItem(Routes.HOME, "Home", Icons.Default.Home),
+        TabItem(Routes.ABOUT, "About", Icons.Default.Info)
     )
 
-    Box(
+    val activeIndex = items.indexOfFirst { it.route == currentRoute }.coerceAtLeast(0)
+    val density = LocalDensity.current
+
+    var totalWidth by remember { mutableStateOf(0.dp) }
+
+    BoxWithConstraints(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 24.dp, vertical = 12.dp)
+            .fillMaxWidth(0.92f)
+            .padding(bottom = 28.dp)
+            .height(80.dp)
+            .onGloballyPositioned { totalWidth = it.size.width.toDp() }
     ) {
-        Row(
+        val capsuleWidth = totalWidth
+        val pillWidth = capsuleWidth * 0.32f
+        val segmentWidth = capsuleWidth / 3
+        val pillOffsetX by animateDpAsState(
+            targetValue = segmentWidth * activeIndex + (segmentWidth - pillWidth) / 2,
+            animationSpec = tween(durationMillis = 350)
+        )
+
+        // Outer capsule container
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .shadow(16.dp, RoundedCornerShape(20.dp))
-                .clip(RoundedCornerShape(20.dp))
+                .height(80.dp)
+                .shadow(24.dp, RoundedCornerShape(36.dp), ambientColor = Color.Magenta.copy(alpha = 0.15f), spotColor = Color.Magenta.copy(alpha = 0.15f))
+                .clip(RoundedCornerShape(36.dp))
                 .background(
                     Brush.verticalGradient(
                         colors = listOf(
@@ -236,57 +264,78 @@ private fun FloatingGlassBottomBar(
                         )
                     )
                 )
-                .padding(horizontal = 8.dp, vertical = 6.dp),
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically
+                .border(1.dp, Color.White.copy(alpha = 0.08f), RoundedCornerShape(36.dp))
         ) {
-            items.forEach { (route, label, icon) ->
-                val selected = currentRoute == route
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(vertical = 4.dp)
-                        .clickable { onNavigate(route) },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(16.dp))
-                            .then(
-                                if (selected) {
-                                    Modifier
-                                        .background(
-                                            Brush.horizontalGradient(
-                                                colors = listOf(
-                                                    Color(0x668E96FF),
-                                                    Color(0x336366F1)
-                                                )
-                                            ),
-                                            RoundedCornerShape(16.dp)
-                                        )
-                                        .padding(horizontal = 14.dp, vertical = 4.dp)
-                                } else {
-                                    Modifier.padding(horizontal = 14.dp, vertical = 4.dp)
-                                }
+            // Animated pill background
+            Box(
+                modifier = Modifier
+                    .offset(x = pillOffsetX)
+                    .padding(vertical = 6.dp)
+                    .size(width = pillWidth, height = 68.dp)
+                    .clip(RoundedCornerShape(30.dp))
+                    .background(
+                        Brush.horizontalGradient(
+                            colors = listOf(
+                                Color(0x558E96FF),
+                                Color(0x336366F1)
                             )
-                    ) {
-                        Icon(
-                            imageVector = icon,
-                            contentDescription = label,
-                            modifier = Modifier.size(
-                                if (route == Routes.HOME) 28.dp else 24.dp
-                            ),
-                            tint = if (selected) Color(0xFFE0E7FF) else Color(0x99B7B9C8)
-                        )
-                        Text(
-                            text = label,
-                            fontSize = if (route == Routes.HOME) 12.sp else 11.sp,
-                            color = if (selected) Color(0xFFE0E7FF) else Color(0x99B7B9C8)
-                        )
-                    }
+                        ),
+                        RoundedCornerShape(30.dp)
+                    )
+                    .border(1.dp, Color.White.copy(alpha = 0.1f), RoundedCornerShape(30.dp))
+            )
+
+            // Tabs row
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(80.dp),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                items.forEachIndexed { index, item ->
+                    val selected = index == activeIndex
+                    Tab(
+                        item = item,
+                        selected = selected,
+                        onClick = { onNavigate(item.route) }
+                    )
                 }
             }
         }
     }
 }
+
+@Composable
+private fun Tab(
+    item: TabItem,
+    selected: Boolean,
+    onClick: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .clickable(onClick = onClick)
+            .scale(if (selected) 1.05f else 1f)
+            .padding(vertical = 8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Icon(
+            imageVector = item.icon,
+            contentDescription = item.label,
+            modifier = Modifier.size(if (item.route == Routes.HOME) 26.dp else 22.dp),
+            tint = if (selected) Color.White else Color(0x99B7B9C8)
+        )
+        Text(
+            text = item.label,
+            fontSize = if (item.route == Routes.HOME) 11.sp else 10.sp,
+            color = if (selected) Color.White else Color(0x99B7B9C8)
+        )
+    }
+}
+
+private data class TabItem(
+    val route: String,
+    val label: String,
+    val icon: ImageVector
+)
