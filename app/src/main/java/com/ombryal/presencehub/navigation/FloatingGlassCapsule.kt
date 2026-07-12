@@ -17,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
@@ -31,7 +32,7 @@ import androidx.compose.ui.unit.sp
 fun FloatingGlassCapsule(
     currentRoute: String,
     onNavigate: (String) -> Unit,
-    modifier: Modifier = Modifier   // ← new outer modifier parameter
+    modifier: Modifier = Modifier
 ) {
     val items = listOf(
         TabItem(Routes.STORE, "Store", Icons.Default.Store),
@@ -42,9 +43,9 @@ fun FloatingGlassCapsule(
     val activeIndex = items.indexOfFirst { it.route == currentRoute }.coerceAtLeast(0)
 
     BoxWithConstraints(
-        modifier = modifier   // apply outer modifier (alignment, padding, etc.)
+        modifier = modifier
             .fillMaxWidth(0.88f)
-            .padding(bottom = 48.dp)
+            .padding(bottom = 36.dp)   // ← adjusted from 48dp to 36dp
             .height(72.dp)
     ) {
         val pillWidth = maxWidth * 0.28f
@@ -54,7 +55,7 @@ fun FloatingGlassCapsule(
             animationSpec = tween(durationMillis = 350)
         )
 
-        // Glass container
+        // Glass container with soft blur for frosted look
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -66,8 +67,9 @@ fun FloatingGlassCapsule(
                     spotColor = Color.Black.copy(alpha = 0.15f)
                 )
                 .clip(RoundedCornerShape(36.dp))
-                .background(Color(0x26FFFFFF))
+                .background(Color(0x30FFFFFF))   // slightly more opaque (18% → 19%)
                 .border(1.dp, Color(0x33FFFFFF), RoundedCornerShape(36.dp))
+                .blur(radius = 2.dp)             // soft overall blur for glass effect
         ) {
             // Active pill highlight
             Box(
