@@ -1,12 +1,8 @@
 package com.ombryal.presencehub.navigation
 
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -22,8 +18,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -46,9 +42,9 @@ fun FloatingGlassCapsule(
 
     BoxWithConstraints(
         modifier = Modifier
-            .fillMaxWidth(0.76f)
-            .padding(bottom = 12.dp)
-            .height(56.dp)
+            .fillMaxWidth(0.88f)
+            .padding(bottom = 24.dp) // floats above bottom edge
+            .height(72.dp)
     ) {
         val pillWidth = maxWidth * 0.28f
         val segmentWidth = maxWidth / 3
@@ -57,60 +53,57 @@ fun FloatingGlassCapsule(
             animationSpec = tween(durationMillis = 350)
         )
 
-        // Outer glass container
+        // Glass container
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(56.dp)
+                .height(72.dp)
                 .shadow(
-                    elevation = 12.dp,
-                    shape = RoundedCornerShape(24.dp),
-                    ambientColor = Color.Magenta.copy(alpha = 0.1f),
-                    spotColor = Color.Magenta.copy(alpha = 0.1f)
+                    elevation = 16.dp,
+                    shape = RoundedCornerShape(36.dp),
+                    ambientColor = Color.Black.copy(alpha = 0.1f),
+                    spotColor = Color.Black.copy(alpha = 0.15f)
                 )
-                .clip(RoundedCornerShape(24.dp))
+                .clip(RoundedCornerShape(36.dp))
                 .background(
-                    Brush.verticalGradient(
-                        colors = listOf(
-                            Color(0xCC1A1A2E),
-                            Color(0xCC10101A)
-                        )
-                    )
+                    Color(0x26FFFFFF) // translucent glass
                 )
-                .border(1.dp, Color.White.copy(alpha = 0.08f), RoundedCornerShape(24.dp))
+                .border(1.dp, Color(0x33FFFFFF), RoundedCornerShape(36.dp))
         ) {
-            // Animated pill highlight
+            // Active pill highlight (soft glowing backdrop)
             Box(
                 modifier = Modifier
                     .offset(x = pillOffsetX)
-                    .padding(vertical = 6.dp)
-                    .size(width = pillWidth, height = 44.dp)
-                    .clip(RoundedCornerShape(20.dp))
+                    .fillMaxHeight()
+                    .width(pillWidth)
                     .background(
                         Brush.horizontalGradient(
                             colors = listOf(
-                                Color(0x558E96FF),
-                                Color(0x336366F1)
-                            )
+                                Color.Transparent,
+                                Color(0x336366F1),
+                                Color(0x338E96FF),
+                                Color(0x336366F1),
+                                Color.Transparent
+                            ),
+                            startX = 0f,
+                            endX = pillWidth.toPx()
                         ),
-                        RoundedCornerShape(20.dp)
+                        RoundedCornerShape(36.dp)
                     )
-                    .border(1.dp, Color.White.copy(alpha = 0.12f), RoundedCornerShape(20.dp))
             )
 
-            // Tabs
+            // Tabs row
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
+                modifier = Modifier.fillMaxSize(),
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 items.forEachIndexed { index, item ->
                     val selected = index == activeIndex
-                    Tab(
+                    TabItemContent(
                         item = item,
                         selected = selected,
+                        segmentWidth = segmentWidth,
                         onClick = { onNavigate(item.route) }
                     )
                 }
@@ -120,48 +113,54 @@ fun FloatingGlassCapsule(
 }
 
 @Composable
-private fun Tab(
+private fun TabItemContent(
     item: TabItem,
     selected: Boolean,
+    segmentWidth: androidx.compose.ui.unit.Dp,
     onClick: () -> Unit
 ) {
-    val scale by animateFloatAsState(
-        targetValue = if (selected) 1.05f else 1f,
+    val iconOffsetY by animateDpAsState(
+        targetValue = if (selected) -10.dp else 0.dp,
+        animationSpec = tween(300)
+    )
+    val textOffsetY by animateDpAsState(
+        targetValue = if (selected) 10.dp else 30.dp, // slides up from below
+        animationSpec = tween(300)
+    )
+    val textAlpha by animateFloatAsState(
+        targetValue = if (selected) 1f else 0f,
         animationSpec = tween(300)
     )
 
     Box(
         modifier = Modifier
-            .width(IntrinsicSize.Min)
-            .height(56.dp)
-            .clickable(onClick = onClick)
-            .scale(scale),
+            .width(segmentWidth)
+            .height(72.dp)
+            .clickable(onClick = onClick),
         contentAlignment = Alignment.Center
     ) {
-        AnimatedContent(
-            targetState = selected,
-            transitionSpec = {
-                fadeIn(animationSpec = tween(250)) togetherWith
-                        fadeOut(animationSpec = tween(250))
-            },
-            label = "tab_content"
-        ) { isSelected ->
-            if (isSelected) {
-                Text(
-                    text = item.label,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = Color.White
+        // Icon – moves up when selected
+        Icon(
+            imageVector = item.icon,
+            contentDescription = item.label,
+            modifier = Modifier
+                .size(22.dp)
+                .offset(y = iconOffsetY),
+            tint = if (selected) Color(0xFFE0E7FF) else Color(0x99B7B9C8)
+        )
+
+        // Text – slides up from below and fades in
+        Text(
+            text = item.label,
+            fontSize = 11.sp,
+            fontWeight = FontWeight.Medium,
+            color = if (selected) Color(0xFFE0E7FF) else Color.Transparent,
+            modifier = Modifier
+                .offset(y = textOffsetY)
+                .then(
+                    Modifier.graphicsLayer { alpha = textAlpha }
                 )
-            } else {
-                Icon(
-                    imageVector = item.icon,
-                    contentDescription = item.label,
-                    modifier = Modifier.size(22.dp),
-                    tint = Color(0x99B7B9C8)
-                )
-            }
-        }
+        )
     }
 }
 
