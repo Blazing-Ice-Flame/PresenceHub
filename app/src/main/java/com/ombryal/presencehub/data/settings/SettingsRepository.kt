@@ -2,6 +2,7 @@ package com.ombryal.presencehub.data.settings
 
 import android.content.Context
 import com.ombryal.presencehub.ui.settings.SettingsUiState
+import com.ombryal.presencehub.ui.settings.ThemeMode
 
 class SettingsRepository(context: Context) {
 
@@ -22,7 +23,10 @@ class SettingsRepository(context: Context) {
             developerMode = prefs.getBoolean(KEY_DEVELOPER_MODE, false),
             hideTitles = prefs.getBoolean(KEY_HIDE_TITLES, false),
             hideChannels = prefs.getBoolean(KEY_HIDE_CHANNELS, false),
-            clearHistoryOnExit = prefs.getBoolean(KEY_CLEAR_HISTORY_ON_EXIT, false)
+            clearHistoryOnExit = prefs.getBoolean(KEY_CLEAR_HISTORY_ON_EXIT, false),
+            themeMode = ThemeMode.valueOf(
+                prefs.getString(KEY_THEME_MODE, ThemeMode.SYSTEM.name) ?: ThemeMode.SYSTEM.name
+            )
         )
     }
 
@@ -42,6 +46,7 @@ class SettingsRepository(context: Context) {
             .putBoolean(KEY_HIDE_TITLES, state.hideTitles)
             .putBoolean(KEY_HIDE_CHANNELS, state.hideChannels)
             .putBoolean(KEY_CLEAR_HISTORY_ON_EXIT, state.clearHistoryOnExit)
+            .putString(KEY_THEME_MODE, state.themeMode.name)
             .apply()
     }
 
@@ -62,5 +67,6 @@ class SettingsRepository(context: Context) {
         const val KEY_HIDE_TITLES = "hide_titles"
         const val KEY_HIDE_CHANNELS = "hide_channels"
         const val KEY_CLEAR_HISTORY_ON_EXIT = "clear_history_on_exit"
+        const val KEY_THEME_MODE = "theme_mode"
     }
 }
