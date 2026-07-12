@@ -1,8 +1,6 @@
 package com.ombryal.presencehub.ui.theme
 
 import android.graphics.Bitmap
-import android.graphics.BitmapShader
-import android.graphics.Shader as AndroidShader
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -11,11 +9,13 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ShaderBrush
+import androidx.compose.ui.graphics.ImageShader
+import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import kotlin.random.Random
 
-// ---- Colour palette ----
+// ---- Colour palette (unchanged) ----
 private val RoyalPurple   = Color(0xFF8B5CF6)
 private val DeepViolet    = Color(0xFF7C3AED)
 private val Lavender      = Color(0xFFC084FC)
@@ -71,7 +71,7 @@ fun GlassmorphismBackground(modifier: Modifier = Modifier) {
         drawGlow(Offset(size.width * 0.15f, size.height * 0.30f), size.minDimension * 0.50f, Cyan.copy(alpha = 0.04f))
         drawGlow(Offset(size.width * 0.85f, size.height * 0.30f), size.minDimension * 0.50f, Magenta.copy(alpha = 0.04f))
 
-        // 5. Noise overlay
+        // 5. Noise overlay (film grain)
         drawNoiseOverlay(alpha = 0.025f)
 
         // 6. Vignette
@@ -108,9 +108,10 @@ private fun DrawScope.drawNoiseOverlay(alpha: Float) {
             bitmap.setPixel(x, y, android.graphics.Color.argb(pixelAlpha, gray, gray, gray))
         }
     }
-    val shader = BitmapShader(bitmap, AndroidShader.TileMode.REPEAT, AndroidShader.TileMode.REPEAT)
+    val imageBitmap = bitmap.asImageBitmap()
+    val imageShader = ImageShader(imageBitmap, TileMode.Repeated, TileMode.Repeated)
     drawRect(
-        brush = ShaderBrush(androidx.compose.ui.graphics.Shader(shader)),
+        brush = ShaderBrush(imageShader),
         size = size
     )
 }
