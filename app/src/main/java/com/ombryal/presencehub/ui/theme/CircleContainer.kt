@@ -8,25 +8,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.ombryal.presencehub.ui.settings.ThemeMode
+
+// Constants for the glass circle style
+private val GlassCircleSurface = Color(0x1AFFFFFF)  // 10% white
+private val GlassCircleBorder = Color(0x33FFFFFF)   // 20% white
 
 @Composable
 fun CircleContainer(
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit
 ) {
-    val themeMode = LocalThemeMode.current
-    val (surface, border) = when (themeMode) {
-        ThemeMode.LIGHT -> LightCircleSurface to LightCircleBorder
-        else -> DarkCircleSurface to DarkCircleBorder
-    }
-
     Box(
         modifier = modifier
             .clip(CircleShape)
-            .background(surface, CircleShape)
-            .border(1.dp, border, CircleShape),
+            .background(GlassCircleSurface, CircleShape)
+            .border(1.dp, GlassCircleBorder, CircleShape),
         contentAlignment = Alignment.Center
     ) {
         content()
