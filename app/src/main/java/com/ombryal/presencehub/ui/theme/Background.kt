@@ -1,5 +1,8 @@
 package com.ombryal.presencehub.ui.theme
 
+import android.graphics.Bitmap
+import android.graphics.BitmapShader
+import android.graphics.Shader as AndroidShader
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -7,15 +10,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.ShaderBrush
-import androidx.compose.ui.graphics.ImageBitmapConfig
-import kotlin.math.pow
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import kotlin.random.Random
 
-// ---- Colour palette (same as before) ----
+// ---- Colour palette ----
 private val RoyalPurple   = Color(0xFF8B5CF6)
 private val DeepViolet    = Color(0xFF7C3AED)
 private val Lavender      = Color(0xFFC084FC)
@@ -32,7 +32,6 @@ private val WarmOrange    = Color(0xFFFB923C)
 private val RosePink      = Color(0xFFF472B6)
 private val Magenta       = Color(0xFFEC4899)
 
-// Base gradient colours
 private val BaseTop    = Color(0xFF08080C)
 private val BaseMid    = Color(0xFF11131A)
 private val BaseBottom = Color(0xFF171922)
@@ -72,7 +71,7 @@ fun GlassmorphismBackground(modifier: Modifier = Modifier) {
         drawGlow(Offset(size.width * 0.15f, size.height * 0.30f), size.minDimension * 0.50f, Cyan.copy(alpha = 0.04f))
         drawGlow(Offset(size.width * 0.85f, size.height * 0.30f), size.minDimension * 0.50f, Magenta.copy(alpha = 0.04f))
 
-        // 5. Noise overlay (film grain)
+        // 5. Noise overlay
         drawNoiseOverlay(alpha = 0.025f)
 
         // 6. Vignette
@@ -99,21 +98,17 @@ private fun DrawScope.drawGlow(center: Offset, radius: Float, color: Color) {
 }
 
 private fun DrawScope.drawNoiseOverlay(alpha: Float) {
-    // Generate a tiny noise bitmap and tile it
     val noiseSize = 64
-    val bitmap = ImageBitmap(noiseSize, noiseSize, ImageBitmapConfig.Argb8888)
-    val random = Random(42) // seeded for consistency
+    val bitmap = Bitmap.createBitmap(noiseSize, noiseSize, Bitmap.Config.ARGB_8888)
+    val random = Random(42)
     for (x in 0 until noiseSize) {
         for (y in 0 until noiseSize) {
             val gray = (random.nextFloat() * 255).toInt()
-            bitmap.setPixel(x, y, android.graphics.Color.argb((alpha * 255).toInt().coerceIn(0,255), gray, gray, gray))
+            val pixelAlpha = (alpha * 255).toInt().coerceIn(0, 255)
+            bitmap.setPixel(x, y, android.graphics.Color.argb(pixelAlpha, gray, gray, gray))
         }
     }
-    val shader = android.graphics.BitmapShader(
-        bitmap.asAndroidBitmap(),
-        android.graphics.Shader.TileMode.REPEAT,
-        android.graphics.Shader.TileMode.REPEAT
-    )
+    val shader = BitmapShader(bitmap, AndroidShader.TileMode.REPEAT, AndroidShader.TileMode.REPEAT)
     drawRect(
         brush = ShaderBrush(androidx.compose.ui.graphics.Shader(shader)),
         size = size
