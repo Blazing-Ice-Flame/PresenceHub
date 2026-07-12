@@ -1,6 +1,5 @@
 package com.ombryal.presencehub.ui.settings
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -26,30 +25,18 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.ombryal.presencehub.ui.account.AccountUiState
 
 @Composable
 fun SettingsScreen(
-    state: SettingsUiState,
-    accountState: AccountUiState,
-    onUpdate: (SettingsUiState) -> Unit,
-    onStartRpc: () -> Unit,
-    onStopRpc: () -> Unit,
-    onRefreshPlugins: () -> Unit
+    onAccountsClick: () -> Unit,
+    onThemeClick: () -> Unit
 ) {
-    var accountsExpanded by remember { mutableStateOf(true) }
-    var themeExpanded by remember { mutableStateOf(true) }
-
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(12.dp),
@@ -79,140 +66,216 @@ fun SettingsScreen(
         }
 
         item {
-            SettingsSectionCard(
+            SettingsRowCard(
                 icon = Icons.Filled.Person,
                 title = "Accounts",
-                expanded = accountsExpanded,
-                onToggle = { accountsExpanded = !accountsExpanded }
+                subtitle = "View connected accounts",
+                onClick = onAccountsClick
+            )
+        }
+
+        item {
+            SettingsRowCard(
+                icon = Icons.Filled.Tune,
+                title = "Theme",
+                subtitle = "Choose app appearance",
+                onClick = onThemeClick
+            )
+        }
+    }
+}
+
+@Composable
+private fun SettingsRowCard(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    title: String,
+    subtitle: String,
+    onClick: () -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() },
+        shape = RoundedCornerShape(18.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFF111724))
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(14.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = Color(0xFF8E96FF)
+            )
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = title,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = subtitle,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color(0xFFB7B9C8)
+                )
+            }
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                contentDescription = null,
+                tint = Color(0xFFDFE3FF)
+            )
+        }
+    }
+}
+
+@Composable
+fun SettingsAccountsScreen(
+    accountState: AccountUiState
+) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(12.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        item {
+            ElevatedCard(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(18.dp),
+                colors = CardDefaults.elevatedCardColors(containerColor = Color(0xFF101623))
             ) {
-                if (accountState.connected) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(10.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.Check,
-                            contentDescription = null,
-                            tint = Color(0xFF2EE58D),
-                            modifier = Modifier.size(20.dp)
-                        )
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                text = accountState.displayName,
-                                fontWeight = FontWeight.Bold
-                            )
-                            Text(
-                                text = accountState.handle,
-                                style = MaterialTheme.typography.bodySmall,
-                                color = Color(0xFFB7B9C8)
-                            )
-                        }
-                    }
-                    Spacer(modifier = Modifier.height(6.dp))
+                Column(
+                    modifier = Modifier.padding(14.dp),
+                    verticalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
                     Text(
-                        text = "Status: ${accountState.liveStatus}",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = Color(0xFF9CA3B8)
+                        text = "Accounts",
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Bold
                     )
-                } else {
                     Text(
-                        text = "No Discord account connected.",
+                        text = "Discord accounts linked to PresenceHub.",
                         color = Color(0xFFB7B9C8)
                     )
                 }
             }
         }
-
         item {
-            SettingsSectionCard(
-                icon = Icons.Filled.Tune,
-                title = "Theme",
-                expanded = themeExpanded,
-                onToggle = { themeExpanded = !themeExpanded }
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(18.dp),
+                colors = CardDefaults.cardColors(containerColor = Color(0xFF111724))
             ) {
-                val themeModes = ThemeMode.values()
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(14.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    themeModes.forEach { mode ->
-                        val selected = state.themeMode == mode
+                    Icon(
+                        imageVector = Icons.Filled.Check,
+                        contentDescription = null,
+                        tint = Color(0xFF2EE58D),
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = accountState.displayName,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            text = accountState.handle,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Color(0xFFB7B9C8)
+                        )
+                    }
+                }
+            }
+            Spacer(modifier = Modifier.height(6.dp))
+            Text(
+                text = "Status: ${accountState.liveStatus}",
+                style = MaterialTheme.typography.bodySmall,
+                color = Color(0xFF9CA3B8),
+                modifier = Modifier.padding(horizontal = 14.dp)
+            )
+        }
+    }
+}
+
+@Composable
+fun SettingsThemeScreen(
+    currentTheme: ThemeMode,
+    onThemeSelected: (ThemeMode) -> Unit
+) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(12.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        item {
+            ElevatedCard(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(18.dp),
+                colors = CardDefaults.elevatedCardColors(containerColor = Color(0xFF101623))
+            ) {
+                Column(
+                    modifier = Modifier.padding(14.dp),
+                    verticalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    Text(
+                        text = "Theme",
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = "Select your preferred appearance.",
+                        color = Color(0xFFB7B9C8)
+                    )
+                }
+            }
+        }
+        item {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(18.dp),
+                colors = CardDefaults.cardColors(containerColor = Color(0xFF111724))
+            ) {
+                Column(
+                    modifier = Modifier.padding(14.dp),
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    ThemeMode.values().forEach { mode ->
+                        val selected = currentTheme == mode
                         val label = when (mode) {
                             ThemeMode.SYSTEM -> "System"
                             ThemeMode.DARK -> "Dark"
                             ThemeMode.LIGHT -> "Light"
                             ThemeMode.GLASS -> "Glass"
                         }
-                        Card(
+                        Row(
                             modifier = Modifier
-                                .weight(1f)
-                                .clickable { onUpdate(state.copy(themeMode = mode)) },
-                            shape = RoundedCornerShape(12.dp),
-                            colors = CardDefaults.cardColors(
-                                containerColor = if (selected) Color(0xFF8E96FF) else Color(0xFF1B2233)
-                            )
+                                .fillMaxWidth()
+                                .clickable { onThemeSelected(mode) }
+                                .padding(vertical = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(10.dp)
                         ) {
+                            Icon(
+                                imageVector = if (selected) Icons.Filled.Check else null,
+                                contentDescription = null,
+                                tint = if (selected) Color(0xFF8E96FF) else Color.Transparent,
+                                modifier = Modifier.size(20.dp)
+                            )
                             Text(
                                 text = label,
-                                modifier = Modifier.padding(vertical = 10.dp),
-                                textAlign = TextAlign.Center,
                                 fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
-                                color = if (selected) Color.White else Color(0xFFB7B9C8),
-                                style = MaterialTheme.typography.labelLarge
+                                color = if (selected) Color.White else Color(0xFFB7B9C8)
                             )
                         }
                     }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun SettingsSectionCard(
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
-    title: String,
-    expanded: Boolean,
-    onToggle: () -> Unit,
-    content: @Composable () -> Unit
-) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onToggle() },
-        shape = RoundedCornerShape(18.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFF111724))
-    ) {
-        Column(
-            modifier = Modifier.padding(14.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                Icon(
-                    imageVector = icon,
-                    contentDescription = null,
-                    tint = Color(0xFF8E96FF)
-                )
-                Text(
-                    text = title,
-                    modifier = Modifier.weight(1f),
-                    fontWeight = FontWeight.Bold
-                )
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                    contentDescription = null,
-                    tint = Color(0xFFDFE3FF)
-                )
-            }
-
-            AnimatedVisibility(visible = expanded) {
-                Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                    content()
                 }
             }
         }
