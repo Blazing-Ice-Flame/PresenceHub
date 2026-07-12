@@ -12,12 +12,16 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import com.ombryal.presencehub.ui.settings.ThemeMode
 
 private val DarkColors = darkColorScheme()
 private val LightColors = lightColorScheme()
+
+val LocalThemeMode = staticCompositionLocalOf { ThemeMode.SYSTEM }
 
 @Composable
 fun PresenceHubTheme(
@@ -42,21 +46,23 @@ fun PresenceHubTheme(
         else -> LightColors
     }
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography
-    ) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            if (themeMode == ThemeMode.GLASS) {
-                GlassmorphismBackground()
-            } else {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(colorScheme.background)
-                )
+    CompositionLocalProvider(LocalThemeMode provides themeMode) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography = Typography
+        ) {
+            Box(modifier = Modifier.fillMaxSize()) {
+                if (themeMode == ThemeMode.GLASS) {
+                    GlassmorphismBackground()
+                } else {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(colorScheme.background)
+                    )
+                }
+                content()
             }
-            content()
         }
     }
 }
