@@ -24,6 +24,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.ombryal.presencehub.ui.theme.CircleContainer
 
 @Composable
 fun SettingsScreen(
@@ -215,15 +216,13 @@ private fun SettingsRow(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(14.dp)
         ) {
-            CircleContainer(
-    modifier = Modifier.size(42.dp)
-) {
-    Icon(
-        imageVector = icon,
-        contentDescription = null,
-        tint = Color(0xFF8E96FF),
-        modifier = Modifier.size(22.dp)
-    )
+            CircleContainer(modifier = Modifier.size(42.dp)) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = Color(0xFF8E96FF),
+                    modifier = Modifier.size(22.dp)
+                )
             }
             Column(modifier = Modifier.weight(1f)) {
                 Text(
