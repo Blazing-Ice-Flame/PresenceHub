@@ -19,7 +19,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -43,7 +42,7 @@ fun FloatingGlassCapsule(
     BoxWithConstraints(
         modifier = Modifier
             .fillMaxWidth(0.88f)
-            .padding(bottom = 24.dp) // floats above bottom edge
+            .padding(bottom = 24.dp)
             .height(72.dp)
     ) {
         val pillWidth = maxWidth * 0.28f
@@ -65,31 +64,28 @@ fun FloatingGlassCapsule(
                     spotColor = Color.Black.copy(alpha = 0.15f)
                 )
                 .clip(RoundedCornerShape(36.dp))
-                .background(
-                    Color(0x26FFFFFF) // translucent glass
-                )
+                .background(Color(0x26FFFFFF))
                 .border(1.dp, Color(0x33FFFFFF), RoundedCornerShape(36.dp))
         ) {
-            // Active pill highlight (soft glowing backdrop)
+            // Active pill highlight – now glass‑styled
             Box(
                 modifier = Modifier
                     .offset(x = pillOffsetX)
                     .fillMaxHeight()
                     .width(pillWidth)
+                    .clip(RoundedCornerShape(36.dp))
                     .background(
-                        Brush.horizontalGradient(
+                        // Translucent white with a hint of purple/blue glow
+                        Brush.radialGradient(
                             colors = listOf(
-                                Color.Transparent,
-                                Color(0x336366F1),
-                                Color(0x338E96FF),
-                                Color(0x336366F1),
-                                Color.Transparent
+                                Color(0x1A8E96FF), // very faint purple
+                                Color(0x0FFFFFFF)
                             ),
-                            startX = 0f,
-                            endX = pillWidth.toPx()
-                        ),
-                        RoundedCornerShape(36.dp)
+                            center = Offset(pillWidth.toPx() / 2, 36.dp.toPx()),
+                            radius = pillWidth.toPx() * 0.8f
+                        )
                     )
+                    .border(1.dp, Color(0x33FFFFFF), RoundedCornerShape(36.dp))
             )
 
             // Tabs row
@@ -124,7 +120,7 @@ private fun TabItemContent(
         animationSpec = tween(300)
     )
     val textOffsetY by animateDpAsState(
-        targetValue = if (selected) 10.dp else 30.dp, // slides up from below
+        targetValue = if (selected) 10.dp else 30.dp,
         animationSpec = tween(300)
     )
     val textAlpha by animateFloatAsState(
@@ -139,7 +135,6 @@ private fun TabItemContent(
             .clickable(onClick = onClick),
         contentAlignment = Alignment.Center
     ) {
-        // Icon – moves up when selected
         Icon(
             imageVector = item.icon,
             contentDescription = item.label,
@@ -149,7 +144,6 @@ private fun TabItemContent(
             tint = if (selected) Color(0xFFE0E7FF) else Color(0x99B7B9C8)
         )
 
-        // Text – slides up from below and fades in
         Text(
             text = item.label,
             fontSize = 11.sp,
@@ -157,9 +151,7 @@ private fun TabItemContent(
             color = if (selected) Color(0xFFE0E7FF) else Color.Transparent,
             modifier = Modifier
                 .offset(y = textOffsetY)
-                .then(
-                    Modifier.graphicsLayer { alpha = textAlpha }
-                )
+                .then(Modifier.graphicsLayer { alpha = textAlpha })
         )
     }
 }
