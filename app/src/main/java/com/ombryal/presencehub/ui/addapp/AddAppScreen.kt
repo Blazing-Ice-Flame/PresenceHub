@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
@@ -27,10 +26,10 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -43,6 +42,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.ombryal.presencehub.plugins.PluginRegistryEntry
+import com.ombryal.presencehub.ui.theme.CircleContainer
 
 @Composable
 fun AddAppScreen(
@@ -72,7 +72,9 @@ fun AddAppScreen(
             ElevatedCard(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(18.dp),
-                colors = CardDefaults.elevatedCardColors(containerColor = Color(0xFF101623))
+                colors = CardDefaults.elevatedCardColors(
+                    containerColor = MaterialTheme.colorScheme.surface
+                )
             ) {
                 Column(
                     modifier = Modifier.padding(14.dp),
@@ -81,7 +83,8 @@ fun AddAppScreen(
                     Text(
                         text = "Plugin Store",
                         style = MaterialTheme.typography.headlineMedium,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
                     )
 
                     OutlinedTextField(
@@ -155,7 +158,7 @@ fun AddAppScreen(
                             storeEntry?.let(onOpenDetails)
                         },
                     shape = RoundedCornerShape(18.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color(0xFF111724))
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
                 ) {
                     Row(
                         modifier = Modifier
@@ -164,19 +167,13 @@ fun AddAppScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        Box(
-                            modifier = Modifier
-                                .size(38.dp)
-                                .background(
-                                    color = Color(0xFF1B2233),
-                                    shape = CircleShape
-                                ),
-                            contentAlignment = Alignment.Center
+                        CircleContainer(
+                            modifier = Modifier.size(38.dp)
                         ) {
                             Text(
                                 text = item.title.take(1),
                                 fontWeight = FontWeight.Bold,
-                                color = Color(0xFF8E96FF)
+                                color = MaterialTheme.colorScheme.primary
                             )
                         }
 
@@ -184,12 +181,13 @@ fun AddAppScreen(
                             Text(
                                 text = item.title,
                                 style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                             Text(
                                 text = item.subtitle,
                                 style = MaterialTheme.typography.bodySmall,
-                                color = Color(0xFFB7B9C8)
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
 
                             Spacer(modifier = Modifier.height(6.dp))
@@ -204,7 +202,7 @@ fun AddAppScreen(
                                     tint = when {
                                         installed -> Color(0xFF2EE58D)
                                         available -> Color(0xFFF6C356)
-                                        else -> Color(0xFF8A8A8A)
+                                        else -> MaterialTheme.colorScheme.onSurfaceVariant
                                     },
                                     modifier = Modifier.size(16.dp)
                                 )
@@ -217,8 +215,8 @@ fun AddAppScreen(
                                     },
                                     color = when {
                                         installed -> Color(0xFF2EE58D)
-                                        available -> if (item.availableInV1) Color(0xFFF6C356) else Color(0xFF8A8A8A)
-                                        else -> Color(0xFF8A8A8A)
+                                        available -> if (item.availableInV1) Color(0xFFF6C356) else MaterialTheme.colorScheme.onSurfaceVariant
+                                        else -> MaterialTheme.colorScheme.onSurfaceVariant
                                     },
                                     style = MaterialTheme.typography.labelMedium
                                 )
@@ -228,7 +226,7 @@ fun AddAppScreen(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                             contentDescription = null,
-                            tint = if (available) Color(0xFFDFE3FF) else Color(0xFF555A6A)
+                            tint = if (available) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
@@ -250,7 +248,7 @@ private fun StatusCard(
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(18.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFF111724))
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Row(
             modifier = Modifier
@@ -259,31 +257,24 @@ private fun StatusCard(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Box(
-                modifier = Modifier
-                    .size(38.dp)
-                    .background(
-                        color = Color(0xFF1B2233),
-                        shape = CircleShape
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
+            CircleContainer(modifier = Modifier.size(38.dp)) {
                 Icon(
                     imageVector = icon,
                     contentDescription = null,
-                    tint = Color(0xFF8E96FF)
+                    tint = MaterialTheme.colorScheme.primary
                 )
             }
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = title,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
                     text = subtitle,
                     style = MaterialTheme.typography.bodySmall,
-                    color = Color(0xFFB7B9C8)
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         }
