@@ -10,13 +10,16 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
@@ -94,10 +97,24 @@ fun AppNavigation(
     val currentRoute = backStackEntry?.destination?.route ?: Routes.HOME
     var selectedPlugin by remember { mutableStateOf<PluginRegistryEntry?>(null) }
 
+    val isSettingsScreen = currentRoute in listOf(
+        Routes.SETTINGS, Routes.SETTINGS_ACCOUNTS, Routes.SETTINGS_THEME
+    )
+
     Scaffold(
         containerColor = Color.Transparent,
         topBar = {
             CenterAlignedTopAppBar(
+                navigationIcon = {
+                    if (isSettingsScreen) {
+                        IconButton(onClick = { navController.popBackStack() }) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = "Back"
+                            )
+                        }
+                    }
+                },
                 title = {
                     Text(
                         text = when (currentRoute) {
@@ -123,30 +140,39 @@ fun AppNavigation(
                         }
                     }
 
-                    IconButton(onClick = { navController.navigate(Routes.SETTINGS) }) {
-                        Icon(
-                            imageVector = Icons.Default.Settings,
-                            contentDescription = "Settings"
-                        )
+                    if (!isSettingsScreen) {
+                        IconButton(onClick = { navController.navigate(Routes.SETTINGS) }) {
+                            Icon(
+                                imageVector = Icons.Default.Settings,
+                                contentDescription = "Settings"
+                            )
+                        }
                     }
                 }
             )
         },
         bottomBar = {
-            FloatingGlassCapsule(
-                currentRoute = currentRoute,
-                onNavigate = { route ->
-                    if (route != currentRoute) {
-                        navController.navigate(route) {
-                            popUpTo(navController.graph.findStartDestination().id) {
-                                saveState = true
+            if (!isSettingsScreen) {
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.BottomCenter
+                ) {
+                    FloatingGlassCapsule(
+                        currentRoute = currentRoute,
+                        onNavigate = { route ->
+                            if (route != currentRoute) {
+                                navController.navigate(route) {
+                                    popUpTo(navController.graph.findStartDestination().id) {
+                                        saveState = true
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
                             }
-                            launchSingleTop = true
-                            restoreState = true
                         }
-                    }
+                    )
                 }
-            )
+            }
         }
     ) { paddingValues ->
         NavHost(
@@ -194,9 +220,7 @@ fun AppNavigation(
                 )
             }
             composable(Routes.SETTINGS_ACCOUNTS) {
-                SettingsAccountsScreen(
-                    accountState = accountState
-                )
+                SettingsAccountsScreen(accountState = accountState)
             }
             composable(Routes.SETTINGS_THEME) {
                 SettingsThemeScreen(
@@ -232,7 +256,7 @@ private fun FloatingGlassCapsule(
     val activeIndex = items.indexOfFirst { it.route == currentRoute }.coerceAtLeast(0)
     val density = LocalDensity.current
 
-    var totalWidth by remember { mutableStateOf(0.dp) }
+    var capsuleWidthDp by remember { mutableStateOf(0.dp) }
 
     BoxWithConstraints(
         modifier = Modifier
@@ -240,23 +264,27 @@ private fun FloatingGlassCapsule(
             .padding(bottom = 28.dp)
             .height(80.dp)
             .onGloballyPositioned { coordinates ->
-                totalWidth = with(density) { coordinates.size.width.toDp() }
+                capsuleWidthDp = with(density) { coordinates.size.width.toDp() }
             }
     ) {
-        val capsuleWidth = totalWidth
-        val pillWidth = capsuleWidth * 0.32f
-        val segmentWidth = capsuleWidth / 3
+        val pillWidth = capsuleWidthDp * 0.32f
+        val segmentWidth = capsuleWidthDp / 3
         val pillOffsetX by animateDpAsState(
             targetValue = segmentWidth * activeIndex + (segmentWidth - pillWidth) / 2,
             animationSpec = tween(durationMillis = 350)
         )
 
-        // Outer capsule container
+        // Outer glass container
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(80.dp)
-                .shadow(24.dp, RoundedCornerShape(36.dp), ambientColor = Color.Magenta.copy(alpha = 0.15f), spotColor = Color.Magenta.copy(alpha = 0.15f))
+                .shadow(
+                    elevation = 24.dp,
+                    shape = RoundedCornerShape(36.dp),
+                    ambientColor = Color.Magenta.copy(alpha = 0.15f),
+                    spotColor = Color.Magenta.copy(alpha = 0.15f)
+                )
                 .clip(RoundedCornerShape(36.dp))
                 .background(
                     Brush.verticalGradient(
@@ -268,7 +296,7 @@ private fun FloatingGlassCapsule(
                 )
                 .border(1.dp, Color.White.copy(alpha = 0.08f), RoundedCornerShape(36.dp))
         ) {
-            // Animated pill background
+            // Animated pill
             Box(
                 modifier = Modifier
                     .offset(x = pillOffsetX)
@@ -287,7 +315,7 @@ private fun FloatingGlassCapsule(
                     .border(1.dp, Color.White.copy(alpha = 0.1f), RoundedCornerShape(30.dp))
             )
 
-            // Tabs row
+            // Tabs
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
