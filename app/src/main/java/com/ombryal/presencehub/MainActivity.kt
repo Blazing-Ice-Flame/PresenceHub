@@ -21,15 +21,19 @@ class MainActivity : ComponentActivity() {
             PresenceHubTheme {
                 val storeState = viewModel.storeState.collectAsStateWithLifecycle().value
                 val accountState = viewModel.accountState.collectAsStateWithLifecycle().value
+                val settingsState = viewModel.settingsState.collectAsStateWithLifecycle().value
 
                 PresenceHubApp(
                     storeState = storeState,
                     accountState = accountState,
+                    settingsState = settingsState,
                     onRefreshPlugins = { viewModel.refreshPluginStore() },
                     onInstallPlugin = { plugin: PluginRegistryEntry -> viewModel.installPlugin(plugin) },
                     onUninstallPlugin = { plugin: PluginRegistryEntry -> viewModel.uninstallPlugin(plugin) },
                     onStartRpc = { ServiceController.startRpcService(this) },
-                    onStopRpc = { ServiceController.stopRpcService(this) }
+                    onStopRpc = { ServiceController.stopRpcService(this) },
+                    onOpenSettings = { },
+                    onUpdateSettings = { newState -> viewModel.updateSettings(newState) }
                 )
             }
         }
