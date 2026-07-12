@@ -1,6 +1,16 @@
 package com.ombryal.presencehub.navigation
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
@@ -11,8 +21,6 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,8 +28,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -46,18 +60,6 @@ object Routes {
     const val SETTINGS = "settings"
     const val PLUGIN_DETAILS = "plugin_details"
 }
-
-private data class BottomItem(
-    val route: String,
-    val label: String,
-    val icon: androidx.compose.ui.graphics.vector.ImageVector
-)
-
-private val bottomItems = listOf(
-    BottomItem(Routes.HOME, "Home", Icons.Default.Home),
-    BottomItem(Routes.ACCOUNT, "Account", Icons.Default.Person),
-    BottomItem(Routes.ABOUT, "About", Icons.Default.Info)
-)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -115,33 +117,20 @@ fun AppNavigation(
             )
         },
         bottomBar = {
-            NavigationBar {
-                bottomItems.forEach { item ->
-                    NavigationBarItem(
-                        selected = currentRoute == item.route,
-                        onClick = {
-                            if (currentRoute != item.route) {
-                                navController.navigate(item.route) {
-                                    popUpTo(navController.graph.findStartDestination().id) {
-                                        saveState = true
-                                    }
-                                    launchSingleTop = true
-                                    restoreState = true
-                                }
+            FloatingGlassBottomBar(
+                currentRoute = currentRoute,
+                onNavigate = { route ->
+                    if (route != currentRoute) {
+                        navController.navigate(route) {
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = true
                             }
-                        },
-                        icon = {
-                            Icon(
-                                imageVector = item.icon,
-                                contentDescription = item.label
-                            )
-                        },
-                        label = {
-                            Text(item.label)
+                            launchSingleTop = true
+                            restoreState = true
                         }
-                    )
+                    }
                 }
-            }
+            )
         }
     ) { paddingValues ->
         NavHost(
@@ -158,7 +147,6 @@ fun AppNavigation(
                     onOpenSettings = { navController.navigate(Routes.SETTINGS) }
                 )
             }
-
             composable(Routes.STORE) {
                 AddAppScreen(
                     availablePlugins = storeState.plugins,
@@ -173,7 +161,6 @@ fun AppNavigation(
                     onBack = { navController.popBackStack() }
                 )
             }
-
             composable(Routes.ACCOUNT) {
                 AccountScreen(
                     state = accountState,
@@ -181,11 +168,9 @@ fun AppNavigation(
                     onStopRpc = onStopRpc
                 )
             }
-
             composable(Routes.ABOUT) {
                 AboutScreen()
             }
-
             composable(Routes.SETTINGS) {
                 SettingsScreen(
                     state = settingsState,
@@ -196,7 +181,6 @@ fun AppNavigation(
                     onRefreshPlugins = onRefreshPlugins
                 )
             }
-
             composable(Routes.PLUGIN_DETAILS) {
                 selectedPlugin?.let { plugin ->
                     PluginDetailsScreen(
@@ -205,6 +189,89 @@ fun AppNavigation(
                         onUninstall = onUninstallPlugin,
                         onBack = { navController.popBackStack() }
                     )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun FloatingGlassBottomBar(
+    currentRoute: String,
+    onNavigate: (String) -> Unit
+) {
+    val items = listOf(
+        Triple(Routes.HOME, "Home", Icons.Default.Home),
+        Triple(Routes.ABOUT, "About", Icons.Default.Info),
+        Triple(Routes.ACCOUNT, "Account", Icons.Default.Person)
+    )
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp, vertical = 12.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .shadow(16.dp, RoundedCornerShape(20.dp))
+                .clip(RoundedCornerShape(20.dp))
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(
+                            Color(0xCC1A1A2E),
+                            Color(0xCC10101A)
+                        )
+                    )
+                )
+                .padding(horizontal = 8.dp, vertical = 6.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            items.forEach { (route, label, icon) ->
+                val selected = currentRoute == route
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(vertical = 4.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(16.dp))
+                            .then(
+                                if (selected) {
+                                    Modifier
+                                        .background(
+                                            Brush.horizontalGradient(
+                                                colors = listOf(
+                                                    Color(0x668E96FF),
+                                                    Color(0x336366F1)
+                                                )
+                                            ),
+                                            RoundedCornerShape(16.dp)
+                                        )
+                                        .padding(horizontal = 14.dp, vertical = 4.dp)
+                                } else {
+                                    Modifier.padding(horizontal = 14.dp, vertical = 4.dp)
+                                }
+                            )
+                    ) {
+                        Icon(
+                            imageVector = icon,
+                            contentDescription = label,
+                            modifier = Modifier.size(
+                                if (route == Routes.HOME) 28.dp else 24.dp
+                            ),
+                            tint = if (selected) Color(0xFFE0E7FF) else Color(0x99B7B9C8)
+                        )
+                        Text(
+                            text = label,
+                            fontSize = if (route == Routes.HOME) 12.sp else 11.sp,
+                            color = if (selected) Color(0xFFE0E7FF) else Color(0x99B7B9C8)
+                        )
+                    }
                 }
             }
         }
