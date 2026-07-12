@@ -1,5 +1,6 @@
 package com.ombryal.presencehub.ui.addapp
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -38,6 +39,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.ombryal.presencehub.plugins.PluginRegistryEntry
@@ -54,11 +56,10 @@ fun AddAppScreen(
 ) {
     var searchQuery by remember { mutableStateOf("") }
 
-    val visibleItems = remember(searchQuery, availablePlugins) {
+    val visibleItems = remember(searchQuery) {
         PluginStoreCatalog.items.filter { item ->
-            val matchesSearch = item.title.contains(searchQuery, ignoreCase = true) ||
+            item.title.contains(searchQuery, ignoreCase = true) ||
                 item.subtitle.contains(searchQuery, ignoreCase = true)
-            matchesSearch
         }
     }
 
@@ -151,7 +152,7 @@ fun AddAppScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable(enabled = available) {
-                            if (storeEntry != null) onOpenDetails(storeEntry)
+                            storeEntry?.let(onOpenDetails)
                         },
                     shape = RoundedCornerShape(18.dp),
                     colors = CardDefaults.cardColors(containerColor = Color(0xFF111724))
@@ -207,6 +208,7 @@ fun AddAppScreen(
                                     },
                                     modifier = Modifier.size(16.dp)
                                 )
+
                                 Text(
                                     text = when {
                                         installed -> "Installed"
@@ -241,7 +243,7 @@ fun AddAppScreen(
 
 @Composable
 private fun StatusCard(
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    icon: ImageVector,
     title: String,
     subtitle: String
 ) {
