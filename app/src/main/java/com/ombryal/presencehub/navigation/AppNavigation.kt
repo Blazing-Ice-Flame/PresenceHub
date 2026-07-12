@@ -239,7 +239,9 @@ private fun FloatingGlassCapsule(
             .fillMaxWidth(0.92f)
             .padding(bottom = 28.dp)
             .height(80.dp)
-            .onGloballyPositioned { totalWidth = it.size.width.toDp() }
+            .onGloballyPositioned { coordinates ->
+                totalWidth = with(density) { coordinates.size.width.toDp() }
+            }
     ) {
         val capsuleWidth = totalWidth
         val pillWidth = capsuleWidth * 0.32f
