@@ -215,26 +215,15 @@ private fun SettingsRow(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(14.dp)
         ) {
-            Box(
-                modifier = Modifier
-                    .size(42.dp)
-                    .clip(RoundedCornerShape(14.dp))
-                    .background(
-                        Brush.linearGradient(
-                            colors = listOf(
-                                Color(0x228E96FF),
-                                Color(0x116366F1)
-                            )
-                        )
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = icon,
-                    contentDescription = null,
-                    tint = Color(0xFF8E96FF),
-                    modifier = Modifier.size(22.dp)
-                )
+            CircleContainer(
+    modifier = Modifier.size(42.dp)
+) {
+    Icon(
+        imageVector = icon,
+        contentDescription = null,
+        tint = Color(0xFF8E96FF),
+        modifier = Modifier.size(22.dp)
+    )
             }
             Column(modifier = Modifier.weight(1f)) {
                 Text(
