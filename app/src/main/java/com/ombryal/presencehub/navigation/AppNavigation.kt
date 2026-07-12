@@ -64,7 +64,6 @@ fun AppNavigation(
         Routes.SETTINGS, Routes.SETTINGS_ACCOUNTS, Routes.SETTINGS_THEME, Routes.SETTINGS_ABOUT
     )
 
-    // Root Box to overlay the floating capsule
     Box(modifier = Modifier.fillMaxSize()) {
         Scaffold(
             containerColor = Color.Transparent,
@@ -110,7 +109,6 @@ fun AppNavigation(
                     }
                 )
             }
-            // bottomBar removed entirely
         ) { paddingValues ->
             NavHost(
                 navController = navController,
@@ -182,12 +180,12 @@ fun AppNavigation(
             }
         }
 
-        // Floating glass capsule overlay (hidden on settings screens)
+        // Floating glass capsule – lowered to almost bottom
         if (!isSettingsScreen) {
             FloatingGlassCapsule(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .padding(bottom = 48.dp),
+                    .padding(bottom = 12.dp),   // just 12dp above screen edge, giving a slight float
                 currentRoute = currentRoute,
                 onNavigate = { route ->
                     if (route != currentRoute) {
