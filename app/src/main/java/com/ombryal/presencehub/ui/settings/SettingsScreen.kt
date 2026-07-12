@@ -20,8 +20,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Devices
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Palette
-import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Tune
@@ -49,6 +47,8 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun SettingsScreen(
+    state: SettingsUiState,
+    onUpdate: (SettingsUiState) -> Unit,
     onStartRpc: () -> Unit,
     onStopRpc: () -> Unit,
     onRefreshPlugins: () -> Unit
@@ -60,25 +60,6 @@ fun SettingsScreen(
     var notificationsExpanded by remember { mutableStateOf(false) }
     var developerExpanded by remember { mutableStateOf(false) }
     var privacyExpanded by remember { mutableStateOf(false) }
-
-    var autoStart by remember { mutableStateOf(false) }
-    var dynamicColors by remember { mutableStateOf(true) }
-    var showPluginUpdates by remember { mutableStateOf(true) }
-
-    var showVideoTitle by remember { mutableStateOf(true) }
-    var showChannelName by remember { mutableStateOf(true) }
-    var showProgress by remember { mutableStateOf(true) }
-    var showElapsedTime by remember { mutableStateOf(true) }
-
-    var notificationAccess by remember { mutableStateOf(false) }
-    var backgroundUpdates by remember { mutableStateOf(true) }
-
-    var debugLogging by remember { mutableStateOf(false) }
-    var developerMode by remember { mutableStateOf(false) }
-
-    var hideTitles by remember { mutableStateOf(false) }
-    var hideChannels by remember { mutableStateOf(false) }
-    var clearHistoryOnExit by remember { mutableStateOf(false) }
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -118,20 +99,20 @@ fun SettingsScreen(
                 SettingsSwitchRow(
                     label = "Auto start RPC",
                     description = "Start the RPC service automatically.",
-                    checked = autoStart,
-                    onCheckedChange = { autoStart = it }
+                    checked = state.autoStartRpc,
+                    onCheckedChange = { onUpdate(state.copy(autoStartRpc = it)) }
                 )
                 SettingsSwitchRow(
                     label = "Dynamic colors",
                     description = "Use system colors when available.",
-                    checked = dynamicColors,
-                    onCheckedChange = { dynamicColors = it }
+                    checked = state.dynamicColors,
+                    onCheckedChange = { onUpdate(state.copy(dynamicColors = it)) }
                 )
                 SettingsSwitchRow(
                     label = "Show plugin updates",
                     description = "Show update badges in the store.",
-                    checked = showPluginUpdates,
-                    onCheckedChange = { showPluginUpdates = it }
+                    checked = state.showPluginUpdates,
+                    onCheckedChange = { onUpdate(state.copy(showPluginUpdates = it)) }
                 )
 
                 Spacer(modifier = Modifier.height(4.dp))
@@ -157,26 +138,26 @@ fun SettingsScreen(
                 SettingsSwitchRow(
                     label = "Video title",
                     description = "Show the current video title.",
-                    checked = showVideoTitle,
-                    onCheckedChange = { showVideoTitle = it }
+                    checked = state.showVideoTitle,
+                    onCheckedChange = { onUpdate(state.copy(showVideoTitle = it)) }
                 )
                 SettingsSwitchRow(
                     label = "Channel name",
                     description = "Show the channel or creator name.",
-                    checked = showChannelName,
-                    onCheckedChange = { showChannelName = it }
+                    checked = state.showChannelName,
+                    onCheckedChange = { onUpdate(state.copy(showChannelName = it)) }
                 )
                 SettingsSwitchRow(
                     label = "Progress",
                     description = "Display the play progress.",
-                    checked = showProgress,
-                    onCheckedChange = { showProgress = it }
+                    checked = state.showProgress,
+                    onCheckedChange = { onUpdate(state.copy(showProgress = it)) }
                 )
                 SettingsSwitchRow(
                     label = "Elapsed time",
                     description = "Display elapsed time.",
-                    checked = showElapsedTime,
-                    onCheckedChange = { showElapsedTime = it }
+                    checked = state.showElapsedTime,
+                    onCheckedChange = { onUpdate(state.copy(showElapsedTime = it)) }
                 )
             }
         }
@@ -191,14 +172,14 @@ fun SettingsScreen(
                 SettingsSwitchRow(
                     label = "Notification access",
                     description = "Allow YouTube detection from notifications.",
-                    checked = notificationAccess,
-                    onCheckedChange = { notificationAccess = it }
+                    checked = state.notificationAccess,
+                    onCheckedChange = { onUpdate(state.copy(notificationAccess = it)) }
                 )
                 SettingsSwitchRow(
                     label = "Background updates",
                     description = "Keep checking active playback in the background.",
-                    checked = backgroundUpdates,
-                    onCheckedChange = { backgroundUpdates = it }
+                    checked = state.backgroundUpdates,
+                    onCheckedChange = { onUpdate(state.copy(backgroundUpdates = it)) }
                 )
 
                 Spacer(modifier = Modifier.height(4.dp))
@@ -224,22 +205,20 @@ fun SettingsScreen(
                 SettingsSwitchRow(
                     label = "Debug logging",
                     description = "Show extra logs while testing.",
-                    checked = debugLogging,
-                    onCheckedChange = { debugLogging = it }
+                    checked = state.debugLogging,
+                    onCheckedChange = { onUpdate(state.copy(debugLogging = it)) }
                 )
                 SettingsSwitchRow(
                     label = "Developer mode",
                     description = "Enable extra debug actions.",
-                    checked = developerMode,
-                    onCheckedChange = { developerMode = it }
+                    checked = state.developerMode,
+                    onCheckedChange = { onUpdate(state.copy(developerMode = it)) }
                 )
 
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                     OutlinedButton(onClick = onRefreshPlugins, modifier = Modifier.weight(1f)) {
-                        Icon(Icons.Filled.Refresh, contentDescription = null)
-                        Spacer(modifier = Modifier.padding(4.dp))
                         Text("Refresh Store")
                     }
                     OutlinedButton(onClick = onStartRpc, modifier = Modifier.weight(1f)) {
@@ -259,20 +238,20 @@ fun SettingsScreen(
                 SettingsSwitchRow(
                     label = "Hide video titles",
                     description = "Mask exact titles in the preview.",
-                    checked = hideTitles,
-                    onCheckedChange = { hideTitles = it }
+                    checked = state.hideTitles,
+                    onCheckedChange = { onUpdate(state.copy(hideTitles = it)) }
                 )
                 SettingsSwitchRow(
                     label = "Hide channel names",
                     description = "Mask creator names in the preview.",
-                    checked = hideChannels,
-                    onCheckedChange = { hideChannels = it }
+                    checked = state.hideChannels,
+                    onCheckedChange = { onUpdate(state.copy(hideChannels = it)) }
                 )
                 SettingsSwitchRow(
                     label = "Clear history on exit",
                     description = "Remove local presence data when closing.",
-                    checked = clearHistoryOnExit,
-                    onCheckedChange = { clearHistoryOnExit = it }
+                    checked = state.clearHistoryOnExit,
+                    onCheckedChange = { onUpdate(state.copy(clearHistoryOnExit = it)) }
                 )
             }
         }
