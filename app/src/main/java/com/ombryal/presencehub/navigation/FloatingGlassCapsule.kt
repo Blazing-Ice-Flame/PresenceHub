@@ -30,7 +30,8 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun FloatingGlassCapsule(
     currentRoute: String,
-    onNavigate: (String) -> Unit
+    onNavigate: (String) -> Unit,
+    modifier: Modifier = Modifier   // ← new outer modifier parameter
 ) {
     val items = listOf(
         TabItem(Routes.STORE, "Store", Icons.Default.Store),
@@ -41,9 +42,9 @@ fun FloatingGlassCapsule(
     val activeIndex = items.indexOfFirst { it.route == currentRoute }.coerceAtLeast(0)
 
     BoxWithConstraints(
-        modifier = Modifier
+        modifier = modifier   // apply outer modifier (alignment, padding, etc.)
             .fillMaxWidth(0.88f)
-            .padding(bottom = 24.dp)
+            .padding(bottom = 48.dp)
             .height(72.dp)
     ) {
         val pillWidth = maxWidth * 0.28f
@@ -68,7 +69,7 @@ fun FloatingGlassCapsule(
                 .background(Color(0x26FFFFFF))
                 .border(1.dp, Color(0x33FFFFFF), RoundedCornerShape(36.dp))
         ) {
-            // Active pill highlight – soft horizontal glow, no pixel offsets
+            // Active pill highlight
             Box(
                 modifier = Modifier
                     .offset(x = pillOffsetX)
@@ -78,8 +79,8 @@ fun FloatingGlassCapsule(
                     .background(
                         Brush.horizontalGradient(
                             colors = listOf(
-                                Color(0x1A8E96FF), // faint purple at edges
-                                Color(0x0FFFFFFF), // nearly transparent centre
+                                Color(0x1A8E96FF),
+                                Color(0x0FFFFFFF),
                                 Color(0x1A8E96FF)
                             )
                         )
@@ -87,7 +88,6 @@ fun FloatingGlassCapsule(
                     .border(1.dp, Color(0x33FFFFFF), RoundedCornerShape(36.dp))
             )
 
-            // Tabs row
             Row(
                 modifier = Modifier.fillMaxSize(),
                 horizontalArrangement = Arrangement.SpaceEvenly,
