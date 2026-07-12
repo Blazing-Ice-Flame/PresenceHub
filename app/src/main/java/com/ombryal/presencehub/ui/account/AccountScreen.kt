@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -50,19 +49,20 @@ fun AccountScreen(
         modifier = Modifier.fillMaxSize()
     ) {
         val compact = maxWidth < 360.dp
-        val horizontalPadding = if (compact) 14.dp else 18.dp
-        val avatarSize = if (compact) 68.dp else 74.dp
-        val outerRadius = if (compact) 20.dp else 22.dp
+        val horizontalPadding = if (compact) 8.dp else 10.dp
+        val avatarSize = if (compact) 64.dp else 70.dp
+        val outerRadius = if (compact) 18.dp else 20.dp
+        val sectionRadius = if (compact) 18.dp else 20.dp
 
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(
                 start = horizontalPadding,
                 end = horizontalPadding,
-                top = 14.dp,
-                bottom = 18.dp
+                top = 8.dp,
+                bottom = 10.dp
             ),
-            verticalArrangement = Arrangement.spacedBy(14.dp)
+            verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             item {
                 ElevatedCard(
@@ -75,9 +75,9 @@ fun AccountScreen(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(if (compact) 14.dp else 16.dp),
+                            .padding(12.dp),
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(if (compact) 12.dp else 14.dp)
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         Box(
                             modifier = Modifier
@@ -97,13 +97,13 @@ fun AccountScreen(
                                 imageVector = Icons.Default.Person,
                                 contentDescription = null,
                                 tint = Color(0xFFD8CBFF),
-                                modifier = Modifier.size(if (compact) 34.dp else 38.dp)
+                                modifier = Modifier.size(if (compact) 32.dp else 36.dp)
                             )
                         }
 
                         Column(
                             modifier = Modifier.weight(1f),
-                            verticalArrangement = Arrangement.spacedBy(4.dp)
+                            verticalArrangement = Arrangement.spacedBy(3.dp)
                         ) {
                             Text(
                                 text = "VoidDev",
@@ -137,11 +137,7 @@ fun AccountScreen(
                             }
 
                             Text(
-                                text = if (state.connected) {
-                                    state.statusMessage
-                                } else {
-                                    "Connect Discord to view Rich Presence."
-                                },
+                                text = if (state.connected) state.statusMessage else "Connect Discord to view Rich Presence.",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = Color(0xFFB7B9C8)
                             )
@@ -149,7 +145,7 @@ fun AccountScreen(
 
                         Box(
                             modifier = Modifier
-                                .size(if (compact) 40.dp else 42.dp)
+                                .size(if (compact) 38.dp else 40.dp)
                                 .clip(CircleShape)
                                 .background(Color(0xFF23283A)),
                             contentAlignment = Alignment.Center
@@ -158,7 +154,7 @@ fun AccountScreen(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                                 contentDescription = null,
                                 tint = Color(0xFFDFE3FF),
-                                modifier = Modifier.size(20.dp)
+                                modifier = Modifier.size(18.dp)
                             )
                         }
                     }
@@ -169,16 +165,17 @@ fun AccountScreen(
                 item {
                     SectionCard(
                         title = "Rich Presence Status",
-                        trailingText = state.liveStatus
+                        trailingText = state.liveStatus,
+                        sectionRadius = sectionRadius
                     ) {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(14.dp),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Box(
                                 modifier = Modifier
-                                    .size(if (compact) 96.dp else 108.dp)
+                                    .size(if (compact) 92.dp else 100.dp)
                                     .clip(RoundedCornerShape(16.dp))
                                     .background(
                                         brush = Brush.linearGradient(
@@ -194,13 +191,13 @@ fun AccountScreen(
                                     imageVector = Icons.Default.Person,
                                     contentDescription = null,
                                     tint = Color.White,
-                                    modifier = Modifier.size(42.dp)
+                                    modifier = Modifier.size(40.dp)
                                 )
                             }
 
                             Column(
                                 modifier = Modifier.weight(1f),
-                                verticalArrangement = Arrangement.spacedBy(4.dp)
+                                verticalArrangement = Arrangement.spacedBy(3.dp)
                             ) {
                                 Text(
                                     text = state.activeProvider,
@@ -224,18 +221,21 @@ fun AccountScreen(
             }
 
             item {
-                SectionCard(title = "Connection") {
+                SectionCard(
+                    title = "Connection",
+                    sectionRadius = sectionRadius
+                ) {
                     Text(
                         text = "Maintain a stable connection to keep RPC active.",
                         style = MaterialTheme.typography.bodyMedium,
                         color = Color(0xFFB7B9C8)
                     )
 
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(2.dp))
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
                         OutlinedButton(
                             onClick = onStartRpc,
@@ -264,8 +264,6 @@ fun AccountScreen(
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(2.dp))
-
                     Text(
                         text = "Try reconnecting if Discord stops updating.",
                         style = MaterialTheme.typography.bodySmall,
@@ -275,14 +273,17 @@ fun AccountScreen(
             }
 
             item {
-                SectionCard(title = "Permissions") {
+                SectionCard(
+                    title = "Permissions",
+                    sectionRadius = sectionRadius
+                ) {
                     Text(
                         text = "This app is allowed to:",
                         style = MaterialTheme.typography.bodySmall,
                         color = Color(0xFFB7B9C8)
                     )
 
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Spacer(modifier = Modifier.height(2.dp))
 
                     state.permissions.forEach { permission ->
                         PermissionRow(
@@ -295,22 +296,25 @@ fun AccountScreen(
 
             if (state.connected) {
                 item {
-                    SectionCard(title = "RPC Preview") {
+                    SectionCard(
+                        title = "RPC Preview",
+                        sectionRadius = sectionRadius
+                    ) {
                         Card(
                             modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(18.dp),
+                            shape = RoundedCornerShape(16.dp),
                             colors = CardDefaults.cardColors(containerColor = Color(0xFF171A28))
                         ) {
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(14.dp),
+                                    .padding(12.dp),
                                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Box(
                                     modifier = Modifier
-                                        .size(56.dp)
+                                        .size(52.dp)
                                         .clip(RoundedCornerShape(14.dp))
                                         .background(
                                             brush = Brush.linearGradient(
@@ -360,18 +364,19 @@ fun AccountScreen(
 private fun SectionCard(
     title: String,
     trailingText: String? = null,
+    sectionRadius: androidx.compose.ui.unit.Dp,
     content: @Composable () -> Unit
 ) {
     ElevatedCard(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(22.dp),
+        shape = RoundedCornerShape(sectionRadius),
         colors = CardDefaults.elevatedCardColors(
             containerColor = Color(0xFF111724)
         )
     ) {
         Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+            modifier = Modifier.padding(14.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -409,7 +414,7 @@ private fun PermissionRow(
     ) {
         Box(
             modifier = Modifier
-                .size(30.dp)
+                .size(28.dp)
                 .clip(RoundedCornerShape(8.dp))
                 .background(Color(0xFF1E2436)),
             contentAlignment = Alignment.Center
@@ -418,7 +423,7 @@ private fun PermissionRow(
                 imageVector = Icons.Default.Tune,
                 contentDescription = null,
                 tint = Color(0xFF8E96FF),
-                modifier = Modifier.size(18.dp)
+                modifier = Modifier.size(16.dp)
             )
         }
 
