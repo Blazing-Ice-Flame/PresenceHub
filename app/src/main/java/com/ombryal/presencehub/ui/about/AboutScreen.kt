@@ -1,9 +1,7 @@
 package com.ombryal.presencehub.ui.about
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -14,7 +12,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
@@ -35,11 +32,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.ombryal.presencehub.ui.theme.CircleContainer
 
 @Composable
 fun AboutScreen() {
@@ -77,7 +73,7 @@ fun AboutScreen() {
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(18.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFF111724))
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
             ) {
                 Column(
                     modifier = Modifier.padding(14.dp),
@@ -86,13 +82,14 @@ fun AboutScreen() {
                     Text(
                         text = "Changelog",
                         style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     changelog.forEach { line ->
                         Text(
                             text = "• $line",
                             style = MaterialTheme.typography.bodyMedium,
-                            color = Color(0xFFE6EAF7)
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                     }
                 }
@@ -151,7 +148,7 @@ fun AboutScreen() {
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(18.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFF111724))
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
             ) {
                 Column(
                     modifier = Modifier.padding(14.dp),
@@ -160,13 +157,14 @@ fun AboutScreen() {
                     Text(
                         text = "Open Source Libraries",
                         style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     openSourceLibraries.forEach { library ->
                         Text(
                             text = "• $library",
                             style = MaterialTheme.typography.bodyMedium,
-                            color = Color(0xFFE6EAF7)
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                     }
                 }
@@ -184,7 +182,7 @@ private fun AppLogoCard() {
     ElevatedCard(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(22.dp),
-        colors = CardDefaults.elevatedCardColors(containerColor = Color(0xFF101623))
+        colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Row(
             modifier = Modifier
@@ -193,21 +191,14 @@ private fun AppLogoCard() {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Box(
-                modifier = Modifier
-                    .size(62.dp)
-                    .background(
-                        brush = Brush.linearGradient(
-                            listOf(Color(0xFF7A4DFF), Color(0xFFB4235A))
-                        ),
-                        shape = CircleShape
-                    ),
-                contentAlignment = Alignment.Center
+            // Use CircleContainer for the logo circle
+            CircleContainer(
+                modifier = Modifier.size(62.dp)
             ) {
                 Icon(
                     imageVector = Icons.Filled.Info,
                     contentDescription = null,
-                    tint = Color.White
+                    tint = MaterialTheme.colorScheme.primary
                 )
             }
 
@@ -215,12 +206,13 @@ private fun AppLogoCard() {
                 Text(
                     text = "PresenceHub",
                     style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
                     text = "Discord RPC for Android",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = Color(0xFFB7B9C8)
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         }
@@ -235,7 +227,7 @@ private fun SimpleInfoCard(
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(18.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFF111724))
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Column(
             modifier = Modifier.padding(14.dp),
@@ -244,12 +236,13 @@ private fun SimpleInfoCard(
             Text(
                 text = title,
                 style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface
             )
             Text(
                 text = value,
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color(0xFFE6EAF7)
+                color = MaterialTheme.colorScheme.onSurface
             )
         }
     }
@@ -266,7 +259,7 @@ private fun ActionRowCard(
             .fillMaxWidth()
             .clickable { },
         shape = RoundedCornerShape(18.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFF111724))
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Row(
             modifier = Modifier
@@ -275,19 +268,11 @@ private fun ActionRowCard(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Box(
-                modifier = Modifier
-                    .size(34.dp)
-                    .background(
-                        color = Color(0xFF1B2233),
-                        shape = CircleShape
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
+            CircleContainer(modifier = Modifier.size(34.dp)) {
                 Icon(
                     imageVector = icon,
                     contentDescription = null,
-                    tint = Color(0xFF8E96FF)
+                    tint = MaterialTheme.colorScheme.primary
                 )
             }
 
@@ -295,19 +280,20 @@ private fun ActionRowCard(
                 Text(
                     text = title,
                     style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
                     text = subtitle,
                     style = MaterialTheme.typography.bodySmall,
-                    color = Color(0xFFB7B9C8)
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
 
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                 contentDescription = null,
-                tint = Color(0xFFDFE3FF)
+                tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }
