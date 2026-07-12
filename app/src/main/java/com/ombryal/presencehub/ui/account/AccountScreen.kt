@@ -38,6 +38,9 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.ombryal.presencehub.ui.theme.CircleContainer
+import com.ombryal.presencehub.ui.theme.LocalThemeMode
+import com.ombryal.presencehub.ui.settings.ThemeMode
 
 @Composable
 fun AccountScreen(
@@ -64,12 +67,13 @@ fun AccountScreen(
             ),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
+            // Profile card
             item {
                 ElevatedCard(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(outerRadius),
                     colors = CardDefaults.elevatedCardColors(
-                        containerColor = Color(0xFF101623)
+                        containerColor = MaterialTheme.colorScheme.surface
                     )
                 ) {
                     Row(
@@ -79,24 +83,12 @@ fun AccountScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        Box(
-                            modifier = Modifier
-                                .size(avatarSize)
-                                .clip(CircleShape)
-                                .background(
-                                    brush = Brush.radialGradient(
-                                        colors = listOf(
-                                            Color(0xFF8A6BFF),
-                                            Color(0xFF2B2448)
-                                        )
-                                    )
-                                ),
-                            contentAlignment = Alignment.Center
-                        ) {
+                        // Avatar circle - use CircleContainer
+                        CircleContainer(modifier = Modifier.size(avatarSize)) {
                             Icon(
                                 imageVector = Icons.Default.Person,
                                 contentDescription = null,
-                                tint = Color(0xFFD8CBFF),
+                                tint = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.size(if (compact) 32.dp else 36.dp)
                             )
                         }
@@ -106,14 +98,15 @@ fun AccountScreen(
                             verticalArrangement = Arrangement.spacedBy(3.dp)
                         ) {
                             Text(
-                                text = "VoidDev",
+                                text = state.displayName,
                                 style = MaterialTheme.typography.titleLarge,
-                                fontWeight = FontWeight.Bold
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                             Text(
-                                text = "voiddev_#1337",
+                                text = state.handle,
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = Color(0xFFB0B3C2)
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
 
                             Row(
@@ -125,35 +118,32 @@ fun AccountScreen(
                                         .size(8.dp)
                                         .clip(CircleShape)
                                         .background(
-                                            if (state.connected) Color(0xFF2EE58D) else Color(0xFF8A8A8A)
+                                            if (state.connected) Color(0xFF2EE58D) else MaterialTheme.colorScheme.onSurfaceVariant
                                         )
                                 )
 
                                 Text(
                                     text = if (state.connected) "Connected" else "Not connected",
                                     style = MaterialTheme.typography.labelLarge,
-                                    color = if (state.connected) Color(0xFF2EE58D) else Color(0xFF8A8A8A)
+                                    color = if (state.connected) Color(0xFF2EE58D) else MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
 
                             Text(
                                 text = if (state.connected) state.statusMessage else "Connect Discord to view Rich Presence.",
                                 style = MaterialTheme.typography.bodySmall,
-                                color = Color(0xFFB7B9C8)
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
 
-                        Box(
-                            modifier = Modifier
-                                .size(if (compact) 38.dp else 40.dp)
-                                .clip(CircleShape)
-                                .background(Color(0xFF23283A)),
-                            contentAlignment = Alignment.Center
+                        // Small arrow circle
+                        CircleContainer(
+                            modifier = Modifier.size(if (compact) 38.dp else 40.dp)
                         ) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                                 contentDescription = null,
-                                tint = Color(0xFFDFE3FF),
+                                tint = MaterialTheme.colorScheme.onSurface,
                                 modifier = Modifier.size(18.dp)
                             )
                         }
@@ -173,19 +163,9 @@ fun AccountScreen(
                             horizontalArrangement = Arrangement.spacedBy(12.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(if (compact) 92.dp else 100.dp)
-                                    .clip(RoundedCornerShape(16.dp))
-                                    .background(
-                                        brush = Brush.linearGradient(
-                                            listOf(
-                                                Color(0xFFB4235A),
-                                                Color(0xFF6D2DFF)
-                                            )
-                                        )
-                                    ),
-                                contentAlignment = Alignment.Center
+                            // Album art placeholder
+                            CircleContainer(
+                                modifier = Modifier.size(if (compact) 92.dp else 100.dp)
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Person,
@@ -202,17 +182,18 @@ fun AccountScreen(
                                 Text(
                                     text = state.activeProvider,
                                     style = MaterialTheme.typography.titleMedium,
-                                    fontWeight = FontWeight.Bold
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onSurface
                                 )
                                 Text(
                                     text = state.activeTitle,
                                     style = MaterialTheme.typography.bodyLarge,
-                                    color = Color(0xFFE7EAF4)
+                                    color = MaterialTheme.colorScheme.onSurface
                                 )
                                 Text(
                                     text = state.activeTime,
                                     style = MaterialTheme.typography.labelLarge,
-                                    color = Color(0xFFB7BAD0)
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
                         }
@@ -228,7 +209,7 @@ fun AccountScreen(
                     Text(
                         text = "Maintain a stable connection to keep RPC active.",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = Color(0xFFB7B9C8)
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
 
                     Spacer(modifier = Modifier.height(2.dp))
@@ -267,7 +248,7 @@ fun AccountScreen(
                     Text(
                         text = "Try reconnecting if Discord stops updating.",
                         style = MaterialTheme.typography.bodySmall,
-                        color = Color(0xFF9CA3B8)
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
@@ -280,7 +261,7 @@ fun AccountScreen(
                     Text(
                         text = "This app is allowed to:",
                         style = MaterialTheme.typography.bodySmall,
-                        color = Color(0xFFB7B9C8)
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
 
                     Spacer(modifier = Modifier.height(2.dp))
@@ -303,7 +284,7 @@ fun AccountScreen(
                         Card(
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(16.dp),
-                            colors = CardDefaults.cardColors(containerColor = Color(0xFF171A28))
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
                         ) {
                             Row(
                                 modifier = Modifier
@@ -312,24 +293,13 @@ fun AccountScreen(
                                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Box(
-                                    modifier = Modifier
-                                        .size(52.dp)
-                                        .clip(RoundedCornerShape(14.dp))
-                                        .background(
-                                            brush = Brush.linearGradient(
-                                                listOf(
-                                                    Color(0xFFFF2D55),
-                                                    Color(0xFF8C4DFF)
-                                                )
-                                            )
-                                        ),
-                                    contentAlignment = Alignment.Center
+                                CircleContainer(
+                                    modifier = Modifier.size(52.dp)
                                 ) {
                                     Text(
                                         text = "YT",
                                         style = MaterialTheme.typography.titleSmall,
-                                        color = Color.White,
+                                        color = MaterialTheme.colorScheme.onSurface,
                                         fontWeight = FontWeight.Bold
                                     )
                                 }
@@ -338,17 +308,18 @@ fun AccountScreen(
                                     Text(
                                         text = state.activeProvider.uppercase(),
                                         style = MaterialTheme.typography.labelMedium,
-                                        color = Color(0xFFB7B9C8)
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                     Text(
                                         text = state.activeTitle,
                                         style = MaterialTheme.typography.titleMedium,
-                                        fontWeight = FontWeight.Bold
+                                        fontWeight = FontWeight.Bold,
+                                        color = MaterialTheme.colorScheme.onSurface
                                     )
                                     Text(
                                         text = "Live preview of the active plugin",
                                         style = MaterialTheme.typography.bodySmall,
-                                        color = Color(0xFF9CA3B8)
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                 }
                             }
@@ -371,7 +342,7 @@ private fun SectionCard(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(sectionRadius),
         colors = CardDefaults.elevatedCardColors(
-            containerColor = Color(0xFF111724)
+            containerColor = MaterialTheme.colorScheme.surface
         )
     ) {
         Column(
@@ -386,7 +357,8 @@ private fun SectionCard(
                 Text(
                     text = title,
                     style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 if (trailingText != null) {
                     Text(
@@ -412,17 +384,11 @@ private fun PermissionRow(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        Box(
-            modifier = Modifier
-                .size(28.dp)
-                .clip(RoundedCornerShape(8.dp))
-                .background(Color(0xFF1E2436)),
-            contentAlignment = Alignment.Center
-        ) {
+        CircleContainer(modifier = Modifier.size(28.dp)) {
             Icon(
                 imageVector = Icons.Default.Tune,
                 contentDescription = null,
-                tint = Color(0xFF8E96FF),
+                tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(16.dp)
             )
         }
@@ -431,13 +397,13 @@ private fun PermissionRow(
             text = text,
             modifier = Modifier.weight(1f),
             style = MaterialTheme.typography.bodyMedium,
-            color = Color(0xFFE6EAF7)
+            color = MaterialTheme.colorScheme.onSurface
         )
 
         Icon(
             imageVector = Icons.Default.Check,
             contentDescription = null,
-            tint = if (granted) Color(0xFF2EE58D) else Color(0xFF8A8A8A),
+            tint = if (granted) Color(0xFF2EE58D) else MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.size(18.dp)
         )
     }
