@@ -107,7 +107,7 @@ fun AppNavigation(
                         }
                     }
 
-                    IconButton(onClick = onOpenSettings) {
+                    IconButton(onClick = { navController.navigate(Routes.SETTINGS) }) {
                         Icon(
                             imageVector = Icons.Default.Settings,
                             contentDescription = "Settings"
