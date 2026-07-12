@@ -1,5 +1,7 @@
 package com.ombryal.presencehub.ui.settings
 
+enum class ThemeMode { SYSTEM, DARK, LIGHT, GLASS }
+
 data class SettingsUiState(
     val autoStartRpc: Boolean = false,
     val dynamicColors: Boolean = true,
@@ -14,5 +16,6 @@ data class SettingsUiState(
     val developerMode: Boolean = false,
     val hideTitles: Boolean = false,
     val hideChannels: Boolean = false,
-    val clearHistoryOnExit: Boolean = false
+    val clearHistoryOnExit: Boolean = false,
+    val themeMode: ThemeMode = ThemeMode.SYSTEM
 )
