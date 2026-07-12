@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.ombryal.presencehub.DiscordRPCHubApp
 import com.ombryal.presencehub.data.models.Presence
+import com.ombryal.presencehub.data.settings.SettingsRepository
 import com.ombryal.presencehub.plugins.InstalledPluginRegistry
 import com.ombryal.presencehub.plugins.PluginInstallManager
 import com.ombryal.presencehub.plugins.PluginRegistryEntry
@@ -12,6 +13,7 @@ import com.ombryal.presencehub.plugins.PluginStore
 import com.ombryal.presencehub.plugins.PluginStoreState
 import com.ombryal.presencehub.rpc.RPCManager
 import com.ombryal.presencehub.ui.account.AccountUiState
+import com.ombryal.presencehub.ui.settings.SettingsUiState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -28,6 +30,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     private val pluginInstallManager = PluginInstallManager(
         installedPluginRegistry = installedPluginRegistry
     )
+    private val settingsRepository = SettingsRepository(application)
 
     private val app get() = getApplication<DiscordRPCHubApp>()
     private val rpcManager: RPCManager get() = app.rpcManager
@@ -37,6 +40,9 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
 
     private val _accountState = MutableStateFlow(AccountUiState())
     val accountState: StateFlow<AccountUiState> = _accountState.asStateFlow()
+
+    private val _settingsState = MutableStateFlow(settingsRepository.load())
+    val settingsState: StateFlow<SettingsUiState> = _settingsState.asStateFlow()
 
     private var accountObserverJob: Job? = null
 
@@ -81,6 +87,13 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch(Dispatchers.IO) {
             pluginInstallManager.uninstall(plugin.pluginId)
             refreshPluginStore()
+        }
+    }
+
+    fun updateSettings(newState: SettingsUiState) {
+        viewModelScope.launch(Dispatchers.IO) {
+            settingsRepository.save(newState)
+            _settingsState.value = newState
         }
     }
 
