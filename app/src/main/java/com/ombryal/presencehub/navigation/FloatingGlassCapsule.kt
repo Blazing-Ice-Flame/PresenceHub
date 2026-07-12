@@ -19,7 +19,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
@@ -27,7 +26,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.unit.toPx
 
 @Composable
 fun FloatingGlassCapsule(
@@ -70,7 +68,7 @@ fun FloatingGlassCapsule(
                 .background(Color(0x26FFFFFF))
                 .border(1.dp, Color(0x33FFFFFF), RoundedCornerShape(36.dp))
         ) {
-            // Active pill highlight – glass‑styled radial glow
+            // Active pill highlight – soft horizontal glow, no pixel offsets
             Box(
                 modifier = Modifier
                     .offset(x = pillOffsetX)
@@ -78,13 +76,12 @@ fun FloatingGlassCapsule(
                     .width(pillWidth)
                     .clip(RoundedCornerShape(36.dp))
                     .background(
-                        Brush.radialGradient(
+                        Brush.horizontalGradient(
                             colors = listOf(
-                                Color(0x1A8E96FF), // faint purple
-                                Color(0x0FFFFFFF)
-                            ),
-                            center = Offset(pillWidth.toPx() / 2, 36.dp.toPx()),
-                            radius = pillWidth.toPx() * 0.8f
+                                Color(0x1A8E96FF), // faint purple at edges
+                                Color(0x0FFFFFFF), // nearly transparent centre
+                                Color(0x1A8E96FF)
+                            )
                         )
                     )
                     .border(1.dp, Color(0x33FFFFFF), RoundedCornerShape(36.dp))
