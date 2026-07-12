@@ -45,7 +45,7 @@ fun FloatingGlassCapsule(
     BoxWithConstraints(
         modifier = modifier
             .fillMaxWidth(0.88f)
-            .padding(bottom = 36.dp)   // ← adjusted from 48dp to 36dp
+            .padding(bottom = 36.dp)
             .height(72.dp)
     ) {
         val pillWidth = maxWidth * 0.28f
@@ -55,23 +55,20 @@ fun FloatingGlassCapsule(
             animationSpec = tween(durationMillis = 350)
         )
 
-        // Glass container with soft blur for frosted look
+        // ---- Background layer (blurred glass) ----
         Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(72.dp)
-                .shadow(
-                    elevation = 16.dp,
-                    shape = RoundedCornerShape(36.dp),
-                    ambientColor = Color.Black.copy(alpha = 0.1f),
-                    spotColor = Color.Black.copy(alpha = 0.15f)
-                )
+                .fillMaxSize()
+                .shadow(16.dp, RoundedCornerShape(36.dp), ambientColor = Color.Black.copy(alpha = 0.1f), spotColor = Color.Black.copy(alpha = 0.15f))
                 .clip(RoundedCornerShape(36.dp))
-                .background(Color(0x30FFFFFF))   // slightly more opaque (18% → 19%)
+                .background(Color(0x30FFFFFF))
                 .border(1.dp, Color(0x33FFFFFF), RoundedCornerShape(36.dp))
-                .blur(radius = 2.dp)             // soft overall blur for glass effect
-        ) {
-            // Active pill highlight
+                .blur(2.dp)   // blur only this background, nothing above
+        )
+
+        // ---- Foreground content (crisp icons & text) ----
+        Box(modifier = Modifier.fillMaxSize()) {
+            // Active pill highlight (soft glow behind the selected tab)
             Box(
                 modifier = Modifier
                     .offset(x = pillOffsetX)
@@ -90,6 +87,7 @@ fun FloatingGlassCapsule(
                     .border(1.dp, Color(0x33FFFFFF), RoundedCornerShape(36.dp))
             )
 
+            // Tabs
             Row(
                 modifier = Modifier.fillMaxSize(),
                 horizontalArrangement = Arrangement.SpaceEvenly,
@@ -116,18 +114,9 @@ private fun TabItemContent(
     segmentWidth: androidx.compose.ui.unit.Dp,
     onClick: () -> Unit
 ) {
-    val iconOffsetY by animateDpAsState(
-        targetValue = if (selected) -10.dp else 0.dp,
-        animationSpec = tween(300)
-    )
-    val textOffsetY by animateDpAsState(
-        targetValue = if (selected) 10.dp else 30.dp,
-        animationSpec = tween(300)
-    )
-    val textAlpha by animateFloatAsState(
-        targetValue = if (selected) 1f else 0f,
-        animationSpec = tween(300)
-    )
+    val iconOffsetY by animateDpAsState(targetValue = if (selected) -10.dp else 0.dp, animationSpec = tween(300))
+    val textOffsetY by animateDpAsState(targetValue = if (selected) 10.dp else 30.dp, animationSpec = tween(300))
+    val textAlpha by animateFloatAsState(targetValue = if (selected) 1f else 0f, animationSpec = tween(300))
 
     Box(
         modifier = Modifier
@@ -144,7 +133,6 @@ private fun TabItemContent(
                 .offset(y = iconOffsetY),
             tint = if (selected) Color(0xFFE0E7FF) else Color(0x99B7B9C8)
         )
-
         Text(
             text = item.label,
             fontSize = 11.sp,
@@ -157,8 +145,4 @@ private fun TabItemContent(
     }
 }
 
-private data class TabItem(
-    val route: String,
-    val label: String,
-    val icon: ImageVector
-)
+private data class TabItem(val route: String, val label: String, val icon: ImageVector)
