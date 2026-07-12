@@ -1,6 +1,5 @@
 package com.ombryal.presencehub.ui.home
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -12,9 +11,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -23,8 +20,8 @@ import com.ombryal.presencehub.plugins.PluginRegistryEntry
 import com.ombryal.presencehub.plugins.PluginStoreState
 import com.ombryal.presencehub.ui.account.AccountUiState
 import com.ombryal.presencehub.ui.theme.CircleContainer
-import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.max
 
 @Composable
 fun HomeScreen(
@@ -34,7 +31,6 @@ fun HomeScreen(
     onWatchOnYouTube: () -> Unit = {},
     onVisitChannel: () -> Unit = {}
 ) {
-    val activePlugin = storeState.plugins.firstOrNull { it.installed }
     val isActive = accountState.connected && accountState.activeProvider.isNotEmpty()
     val installedPlugins = storeState.plugins.filter { it.installed }
 
@@ -51,7 +47,6 @@ fun HomeScreen(
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
-                    // Header
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
@@ -119,7 +114,6 @@ fun HomeScreen(
 
                         Spacer(Modifier.height(12.dp))
 
-                        // Media info row with thumbnail
                         Row(modifier = Modifier.fillMaxWidth()) {
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
@@ -132,13 +126,12 @@ fun HomeScreen(
                                 )
                                 Spacer(Modifier.height(4.dp))
                                 Text(
-                                    text = "Unknown Creator", // placeholder – not in accountState yet
+                                    text = "Unknown Creator",
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
                             Spacer(Modifier.width(12.dp))
-                            // Thumbnail placeholder
                             Card(
                                 modifier = Modifier.size(width = 80.dp, height = 60.dp),
                                 shape = RoundedCornerShape(8.dp),
@@ -159,7 +152,6 @@ fun HomeScreen(
 
                         Spacer(Modifier.height(12.dp))
 
-                        // Progress row
                         val timeParts = accountState.activeTime.split("/")
                         val current = timeParts.getOrNull(0)?.trim() ?: "00:00"
                         val total = timeParts.getOrNull(1)?.trim() ?: "00:00"
@@ -195,7 +187,6 @@ fun HomeScreen(
 
                         Spacer(Modifier.height(12.dp))
 
-                        // Button row
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -245,7 +236,6 @@ fun HomeScreen(
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
-                    // Header
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
                             imageVector = Icons.Filled.Link,
@@ -266,7 +256,7 @@ fun HomeScreen(
 
                     if (installedPlugins.isEmpty()) {
                         Text(
-                            text = "No plugins installed yet.",
+                            text = "No plugins installed yet. Visit the Plugin Store to get started.",
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
