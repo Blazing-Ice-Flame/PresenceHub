@@ -1,5 +1,6 @@
 package com.ombryal.presencehub.ui.about
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,18 +19,16 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Code
-import androidx.compose.material.icons.filled.CreditCard
-import androidx.compose.material.icons.filled.Description
-import androidx.compose.material.icons.filled.Discord
 import androidx.compose.material.icons.filled.Gavel
-import androidx.compose.material.icons.filled.GitHub
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Link
 import androidx.compose.material.icons.filled.Policy
+import androidx.compose.material.icons.filled.Public
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.SmartToy
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -38,6 +37,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
@@ -101,7 +101,7 @@ fun AboutScreen() {
 
         item {
             ActionRowCard(
-                icon = Icons.Filled.GitHub,
+                icon = Icons.Filled.Link,
                 title = "GitHub",
                 subtitle = "Source code and releases"
             )
@@ -109,7 +109,7 @@ fun AboutScreen() {
 
         item {
             ActionRowCard(
-                icon = Icons.Filled.Discord,
+                icon = Icons.Filled.SmartToy,
                 title = "Discord Server",
                 subtitle = "Community and support"
             )
@@ -198,7 +198,7 @@ private fun AppLogoCard() {
                     .size(62.dp)
                     .background(
                         brush = Brush.linearGradient(
-                            listOf(Color(0xFF7A4DFF), Color(0xFFB4235A)),
+                            listOf(Color(0xFF7A4DFF), Color(0xFFB4235A))
                         ),
                         shape = CircleShape
                     ),
@@ -257,7 +257,7 @@ private fun SimpleInfoCard(
 
 @Composable
 private fun ActionRowCard(
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    icon: ImageVector,
     title: String,
     subtitle: String
 ) {
