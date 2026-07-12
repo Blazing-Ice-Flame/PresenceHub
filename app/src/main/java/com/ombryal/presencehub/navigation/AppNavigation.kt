@@ -1,13 +1,12 @@
 package com.ombryal.presencehub.navigation
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -50,6 +49,8 @@ import com.ombryal.presencehub.ui.addapp.AddAppScreen
 import com.ombryal.presencehub.ui.addapp.PluginDetailsScreen
 import com.ombryal.presencehub.ui.home.HomeScreen
 import com.ombryal.presencehub.ui.settings.SettingsScreen
+import com.ombryal.presencehub.ui.settings.SettingsAccountsScreen
+import com.ombryal.presencehub.ui.settings.SettingsThemeScreen
 import com.ombryal.presencehub.ui.settings.SettingsUiState
 
 object Routes {
@@ -58,6 +59,8 @@ object Routes {
     const val ACCOUNT = "account"
     const val ABOUT = "about"
     const val SETTINGS = "settings"
+    const val SETTINGS_ACCOUNTS = "settings_accounts"
+    const val SETTINGS_THEME = "settings_theme"
     const val PLUGIN_DETAILS = "plugin_details"
 }
 
@@ -92,6 +95,8 @@ fun AppNavigation(
                             Routes.ACCOUNT -> "Account"
                             Routes.ABOUT -> "About"
                             Routes.SETTINGS -> "Settings"
+                            Routes.SETTINGS_ACCOUNTS -> "Accounts"
+                            Routes.SETTINGS_THEME -> "Theme"
                             Routes.PLUGIN_DETAILS -> "Plugin Details"
                             else -> "PresenceHub"
                         }
@@ -173,12 +178,19 @@ fun AppNavigation(
             }
             composable(Routes.SETTINGS) {
                 SettingsScreen(
-                    state = settingsState,
-                    accountState = accountState,
-                    onUpdate = onUpdateSettings,
-                    onStartRpc = onStartRpc,
-                    onStopRpc = onStopRpc,
-                    onRefreshPlugins = onRefreshPlugins
+                    onAccountsClick = { navController.navigate(Routes.SETTINGS_ACCOUNTS) },
+                    onThemeClick = { navController.navigate(Routes.SETTINGS_THEME) }
+                )
+            }
+            composable(Routes.SETTINGS_ACCOUNTS) {
+                SettingsAccountsScreen(
+                    accountState = accountState
+                )
+            }
+            composable(Routes.SETTINGS_THEME) {
+                SettingsThemeScreen(
+                    currentTheme = settingsState.themeMode,
+                    onThemeSelected = { mode -> onUpdateSettings(settingsState.copy(themeMode = mode)) }
                 )
             }
             composable(Routes.PLUGIN_DETAILS) {
@@ -201,9 +213,9 @@ private fun FloatingGlassBottomBar(
     onNavigate: (String) -> Unit
 ) {
     val items = listOf(
+        Triple(Routes.ACCOUNT, "Account", Icons.Default.Person),
         Triple(Routes.HOME, "Home", Icons.Default.Home),
-        Triple(Routes.ABOUT, "About", Icons.Default.Info),
-        Triple(Routes.ACCOUNT, "Account", Icons.Default.Person)
+        Triple(Routes.ABOUT, "About", Icons.Default.Info)
     )
 
     Box(
@@ -233,7 +245,8 @@ private fun FloatingGlassBottomBar(
                 Box(
                     modifier = Modifier
                         .weight(1f)
-                        .padding(vertical = 4.dp),
+                        .padding(vertical = 4.dp)
+                        .clickable { onNavigate(route) },
                     contentAlignment = Alignment.Center
                 ) {
                     Column(
