@@ -8,78 +8,77 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.ShaderBrush
+import androidx.compose.ui.graphics.ImageBitmapConfig
+import kotlin.math.pow
+import kotlin.random.Random
+
+// ---- Colour palette (same as before) ----
+private val RoyalPurple   = Color(0xFF8B5CF6)
+private val DeepViolet    = Color(0xFF7C3AED)
+private val Lavender      = Color(0xFFC084FC)
+private val Indigo        = Color(0xFF6366F1)
+private val ElectricBlue  = Color(0xFF3B82F6)
+private val SkyBlue       = Color(0xFF60A5FA)
+private val Cyan          = Color(0xFF22D3EE)
+private val Turquoise     = Color(0xFF06B6D4)
+private val Teal          = Color(0xFF14B8A6)
+private val Emerald       = Color(0xFF10B981)
+private val Lime          = Color(0xFF84CC16)
+private val SoftAmber     = Color(0xFFF59E0B)
+private val WarmOrange    = Color(0xFFFB923C)
+private val RosePink      = Color(0xFFF472B6)
+private val Magenta       = Color(0xFFEC4899)
+
+// Base gradient colours
+private val BaseTop    = Color(0xFF08080C)
+private val BaseMid    = Color(0xFF11131A)
+private val BaseBottom = Color(0xFF171922)
 
 @Composable
 fun GlassmorphismBackground(modifier: Modifier = Modifier) {
     Canvas(modifier = modifier.fillMaxSize()) {
-        // Base vertical gradient
+        // 1. Base vertical gradient
         drawRect(
             brush = Brush.verticalGradient(
-                colors = listOf(GradientTop, GradientBottom),
+                colors = listOf(BaseTop, BaseMid, BaseBottom),
                 startY = 0f,
                 endY = size.height
             )
         )
 
-        // Bottom-left purple glow
-        drawGlow(
-            center = Offset(size.width * 0.15f, size.height * 0.82f),
-            radius = size.minDimension * 0.65f,
-            color = PurpleGlow.copy(alpha = 0.08f)
-        )
-        // Bottom-left violet
-        drawGlow(
-            center = Offset(size.width * 0.1f, size.height * 0.7f),
-            radius = size.minDimension * 0.5f,
-            color = VioletGlow.copy(alpha = 0.06f)
-        )
-        // Bottom-center indigo
-        drawGlow(
-            center = Offset(size.width * 0.45f, size.height * 0.88f),
-            radius = size.minDimension * 0.75f,
-            color = IndigoGlow.copy(alpha = 0.07f)
-        )
-        // Bottom-right pink
-        drawGlow(
-            center = Offset(size.width * 0.85f, size.height * 0.8f),
-            radius = size.minDimension * 0.6f,
-            color = PinkGlow.copy(alpha = 0.06f)
-        )
-        // Bottom-right magenta
-        drawGlow(
-            center = Offset(size.width * 0.9f, size.height * 0.72f),
-            radius = size.minDimension * 0.55f,
-            color = MagentaGlow.copy(alpha = 0.05f)
-        )
-        // Upper-left cyan
-        drawGlow(
-            center = Offset(size.width * 0.1f, size.height * 0.15f),
-            radius = size.minDimension * 0.5f,
-            color = CyanGlow.copy(alpha = 0.04f)
-        )
-        // Upper-right blue
-        drawGlow(
-            center = Offset(size.width * 0.85f, size.height * 0.2f),
-            radius = size.minDimension * 0.5f,
-            color = BlueGlow.copy(alpha = 0.05f)
-        )
-        // Center teal very subtle
-        drawGlow(
-            center = Offset(size.width * 0.6f, size.height * 0.5f),
-            radius = size.minDimension * 0.4f,
-            color = TealGlow.copy(alpha = 0.03f)
-        )
-        // Faint amber touch near middle-bottom
-        drawGlow(
-            center = Offset(size.width * 0.55f, size.height * 0.75f),
-            radius = size.minDimension * 0.5f,
-            color = AmberGlow.copy(alpha = 0.04f)
-        )
+        // 2. Large ambient lights (layer 1)
+        drawGlow(Offset(size.width * 0.25f, size.height * 0.15f), size.minDimension * 0.9f, RoyalPurple.copy(alpha = 0.08f))
+        drawGlow(Offset(size.width * 0.75f, size.height * 0.10f), size.minDimension * 0.95f, ElectricBlue.copy(alpha = 0.07f))
+        drawGlow(Offset(size.width * 0.10f, size.height * 0.70f), size.minDimension * 0.80f, Cyan.copy(alpha = 0.06f))
+        drawGlow(Offset(size.width * 0.90f, size.height * 0.70f), size.minDimension * 0.85f, Magenta.copy(alpha = 0.06f))
+        drawGlow(Offset(size.width * 0.50f, size.height * 0.80f), size.minDimension * 1.00f, Indigo.copy(alpha = 0.07f))
+        drawGlow(Offset(size.width * 0.35f, size.height * 0.60f), size.minDimension * 0.75f, Turquoise.copy(alpha = 0.05f))
+        drawGlow(Offset(size.width * 0.65f, size.height * 0.60f), size.minDimension * 0.75f, RosePink.copy(alpha = 0.05f))
 
-        // Vignette
+        // 3. Medium accent lights (layer 2)
+        drawGlow(Offset(size.width * 0.40f, size.height * 0.25f), size.minDimension * 0.60f, Lavender.copy(alpha = 0.07f))
+        drawGlow(Offset(size.width * 0.60f, size.height * 0.25f), size.minDimension * 0.60f, SkyBlue.copy(alpha = 0.07f))
+        drawGlow(Offset(size.width * 0.20f, size.height * 0.85f), size.minDimension * 0.55f, Teal.copy(alpha = 0.06f))
+        drawGlow(Offset(size.width * 0.80f, size.height * 0.85f), size.minDimension * 0.55f, WarmOrange.copy(alpha = 0.06f))
+        drawGlow(Offset(size.width * 0.50f, size.height * 0.45f), size.minDimension * 0.50f, DeepViolet.copy(alpha = 0.06f))
+        drawGlow(Offset(size.width * 0.50f, size.height * 0.55f), size.minDimension * 0.50f, Emerald.copy(alpha = 0.05f))
+
+        // 4. Fine ambient tints (layer 3)
+        drawGlow(Offset(size.width * 0.30f, size.height * 0.40f), size.minDimension * 0.45f, Lime.copy(alpha = 0.04f))
+        drawGlow(Offset(size.width * 0.70f, size.height * 0.40f), size.minDimension * 0.45f, SoftAmber.copy(alpha = 0.04f))
+        drawGlow(Offset(size.width * 0.15f, size.height * 0.30f), size.minDimension * 0.50f, Cyan.copy(alpha = 0.04f))
+        drawGlow(Offset(size.width * 0.85f, size.height * 0.30f), size.minDimension * 0.50f, Magenta.copy(alpha = 0.04f))
+
+        // 5. Noise overlay (film grain)
+        drawNoiseOverlay(alpha = 0.025f)
+
+        // 6. Vignette
         drawRect(
             brush = Brush.radialGradient(
-                colors = listOf(Color.Transparent, VignetteColor),
+                colors = listOf(Color.Transparent, Color(0x33000000)),
                 center = Offset(size.width / 2f, size.height / 2f),
                 radius = size.minDimension * 0.75f
             )
@@ -96,5 +95,27 @@ private fun DrawScope.drawGlow(center: Offset, radius: Float, color: Color) {
         ),
         radius = radius,
         center = center
+    )
+}
+
+private fun DrawScope.drawNoiseOverlay(alpha: Float) {
+    // Generate a tiny noise bitmap and tile it
+    val noiseSize = 64
+    val bitmap = ImageBitmap(noiseSize, noiseSize, ImageBitmapConfig.Argb8888)
+    val random = Random(42) // seeded for consistency
+    for (x in 0 until noiseSize) {
+        for (y in 0 until noiseSize) {
+            val gray = (random.nextFloat() * 255).toInt()
+            bitmap.setPixel(x, y, android.graphics.Color.argb((alpha * 255).toInt().coerceIn(0,255), gray, gray, gray))
+        }
+    }
+    val shader = android.graphics.BitmapShader(
+        bitmap.asAndroidBitmap(),
+        android.graphics.Shader.TileMode.REPEAT,
+        android.graphics.Shader.TileMode.REPEAT
+    )
+    drawRect(
+        brush = ShaderBrush(androidx.compose.ui.graphics.Shader(shader)),
+        size = size
     )
 }
