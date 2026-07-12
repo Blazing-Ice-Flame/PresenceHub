@@ -2,6 +2,7 @@ package com.ombryal.presencehub.ui.theme
 
 import android.app.Activity
 import android.os.Build
+import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,6 +14,7 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import com.ombryal.presencehub.ui.settings.ThemeMode
 
 private val DarkColors = darkColorScheme()
 private val LightColors = lightColorScheme()
@@ -21,14 +23,22 @@ private val LightColors = lightColorScheme()
 fun PresenceHubTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     dynamicColor: Boolean = true,
+    themeMode: ThemeMode = ThemeMode.SYSTEM,
     content: @Composable () -> Unit
 ) {
     val context = LocalContext.current
+    val useDarkTheme = when (themeMode) {
+        ThemeMode.SYSTEM -> darkTheme
+        ThemeMode.DARK, ThemeMode.GLASS -> true
+        ThemeMode.LIGHT -> false
+    }
+
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+            if (useDarkTheme) dynamicDarkColorScheme(context)
+            else dynamicLightColorScheme(context)
         }
-        darkTheme -> DarkColors
+        useDarkTheme -> DarkColors
         else -> LightColors
     }
 
@@ -37,7 +47,15 @@ fun PresenceHubTheme(
         typography = Typography
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
-            GlassmorphismBackground()
+            if (themeMode == ThemeMode.GLASS) {
+                GlassmorphismBackground()
+            } else {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(colorScheme.background)
+                )
+            }
             content()
         }
     }
