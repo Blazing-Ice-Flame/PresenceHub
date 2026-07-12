@@ -2,6 +2,7 @@ package com.ombryal.presencehub.ui.settings
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -263,12 +264,16 @@ fun SettingsThemeScreen(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(10.dp)
                         ) {
-                            Icon(
-                                imageVector = if (selected) Icons.Filled.Check else null,
-                                contentDescription = null,
-                                tint = if (selected) Color(0xFF8E96FF) else Color.Transparent,
-                                modifier = Modifier.size(20.dp)
-                            )
+                            Box(modifier = Modifier.size(20.dp)) {
+                                if (selected) {
+                                    Icon(
+                                        imageVector = Icons.Filled.Check,
+                                        contentDescription = null,
+                                        tint = Color(0xFF8E96FF),
+                                        modifier = Modifier.size(20.dp)
+                                    )
+                                }
+                            }
                             Text(
                                 text = label,
                                 fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
