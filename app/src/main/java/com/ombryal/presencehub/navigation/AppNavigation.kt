@@ -67,6 +67,9 @@ fun AppNavigation(
         containerColor = Color.Transparent,
         topBar = {
             CenterAlignedTopAppBar(
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = Color.Transparent
+                ),
                 navigationIcon = {
                     if (isSettingsScreen) {
                         IconButton(onClick = { navController.popBackStack() }) {
