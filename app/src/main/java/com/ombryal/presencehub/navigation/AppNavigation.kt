@@ -189,6 +189,7 @@ fun AppNavigation(
             composable(Routes.SETTINGS) {
                 SettingsScreen(
                     state = settingsState,
+                    accountState = accountState,
                     onUpdate = onUpdateSettings,
                     onStartRpc = onStartRpc,
                     onStopRpc = onStopRpc,
