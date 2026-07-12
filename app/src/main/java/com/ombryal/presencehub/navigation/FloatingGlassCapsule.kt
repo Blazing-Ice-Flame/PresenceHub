@@ -19,12 +19,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.toPx
 
 @Composable
 fun FloatingGlassCapsule(
@@ -67,7 +70,7 @@ fun FloatingGlassCapsule(
                 .background(Color(0x26FFFFFF))
                 .border(1.dp, Color(0x33FFFFFF), RoundedCornerShape(36.dp))
         ) {
-            // Active pill highlight – now glass‑styled
+            // Active pill highlight – glass‑styled radial glow
             Box(
                 modifier = Modifier
                     .offset(x = pillOffsetX)
@@ -75,10 +78,9 @@ fun FloatingGlassCapsule(
                     .width(pillWidth)
                     .clip(RoundedCornerShape(36.dp))
                     .background(
-                        // Translucent white with a hint of purple/blue glow
                         Brush.radialGradient(
                             colors = listOf(
-                                Color(0x1A8E96FF), // very faint purple
+                                Color(0x1A8E96FF), // faint purple
                                 Color(0x0FFFFFFF)
                             ),
                             center = Offset(pillWidth.toPx() / 2, 36.dp.toPx()),
@@ -151,7 +153,7 @@ private fun TabItemContent(
             color = if (selected) Color(0xFFE0E7FF) else Color.Transparent,
             modifier = Modifier
                 .offset(y = textOffsetY)
-                .then(Modifier.graphicsLayer { alpha = textAlpha })
+                .graphicsLayer { alpha = textAlpha }
         )
     }
 }
