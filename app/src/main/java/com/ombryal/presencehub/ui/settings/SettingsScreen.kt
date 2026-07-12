@@ -24,12 +24,12 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.ombryal.presencehub.ui.account.AccountUiState
 
 @Composable
 fun SettingsScreen(
     onAccountsClick: () -> Unit,
-    onThemeClick: () -> Unit
+    onThemeClick: () -> Unit,
+    onAboutClick: () -> Unit
 ) {
     var searchQuery by remember { mutableStateOf("") }
 
@@ -38,9 +38,35 @@ fun SettingsScreen(
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        // Hero card
+        // Hero card – only "Settings" title
         item {
-            HeroSettingsCard()
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .shadow(12.dp, RoundedCornerShape(20.dp), ambientColor = Color.Magenta.copy(alpha = 0.1f))
+                    .clip(RoundedCornerShape(20.dp))
+                    .background(
+                        Brush.linearGradient(
+                            colors = listOf(
+                                Color(0xFF1B1E2E),
+                                Color(0xFF141624)
+                            )
+                        )
+                    ),
+                shape = RoundedCornerShape(20.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+            ) {
+                Box(
+                    modifier = Modifier.padding(20.dp)
+                ) {
+                    Text(
+                        text = "Settings",
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+                }
+            }
         }
 
         // Search bar
@@ -92,48 +118,18 @@ fun SettingsScreen(
                 onClick = { /* TODO */ }
             )
         }
+        // About row (opens the new SettingsAboutScreen)
+        item {
+            SettingsRow(
+                icon = Icons.Filled.Info,
+                title = "About",
+                subtitle = "Version info, licenses, and credits",
+                onClick = onAboutClick
+            )
+        }
 
-        // Bottom spacer
         item {
             Spacer(modifier = Modifier.height(16.dp))
-        }
-    }
-}
-
-@Composable
-private fun HeroSettingsCard() {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .shadow(12.dp, RoundedCornerShape(20.dp), ambientColor = Color.Magenta.copy(alpha = 0.1f))
-            .clip(RoundedCornerShape(20.dp))
-            .background(
-                Brush.linearGradient(
-                    colors = listOf(
-                        Color(0xFF1B1E2E),
-                        Color(0xFF141624)
-                    )
-                )
-            ),
-        shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.Transparent)
-    ) {
-        Column(
-            modifier = Modifier.padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(6.dp)
-        ) {
-            Text(
-                text = "Settings",
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold,
-                color = Color.White
-            )
-            Text(
-                text = "Control how PresenceHub looks and behaves. Customize your experience, manage accounts, and more.",
-                style = MaterialTheme.typography.bodyMedium,
-                color = Color(0xFFB7B9C8),
-                lineHeight = 20.sp
-            )
         }
     }
 }
@@ -219,7 +215,6 @@ private fun SettingsRow(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(14.dp)
         ) {
-            // Icon container
             Box(
                 modifier = Modifier
                     .size(42.dp)
@@ -241,7 +236,6 @@ private fun SettingsRow(
                     modifier = Modifier.size(22.dp)
                 )
             }
-            // Text
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = title,
@@ -256,166 +250,12 @@ private fun SettingsRow(
                     fontSize = 12.sp
                 )
             }
-            // Arrow
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                 contentDescription = null,
                 tint = Color(0xFF6366F1),
                 modifier = Modifier.size(18.dp)
             )
-        }
-    }
-}
-
-@Composable
-fun SettingsAccountsScreen(accountState: AccountUiState) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(12.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp)
-    ) {
-        item {
-            ElevatedCard(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(18.dp),
-                colors = CardDefaults.elevatedCardColors(containerColor = Color(0xFF101623))
-            ) {
-                Column(
-                    modifier = Modifier.padding(14.dp),
-                    verticalArrangement = Arrangement.spacedBy(6.dp)
-                ) {
-                    Text(
-                        text = "Accounts",
-                        style = MaterialTheme.typography.headlineMedium,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        text = "Discord accounts linked to PresenceHub.",
-                        color = Color(0xFFB7B9C8)
-                    )
-                }
-            }
-        }
-        item {
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(18.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFF111724))
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(14.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Check,
-                        contentDescription = null,
-                        tint = Color(0xFF2EE58D),
-                        modifier = Modifier.size(20.dp)
-                    )
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = accountState.displayName,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Text(
-                            text = accountState.handle,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = Color(0xFFB7B9C8)
-                        )
-                    }
-                }
-            }
-            Spacer(modifier = Modifier.height(6.dp))
-            Text(
-                text = "Status: ${accountState.liveStatus}",
-                style = MaterialTheme.typography.bodySmall,
-                color = Color(0xFF9CA3B8),
-                modifier = Modifier.padding(horizontal = 14.dp)
-            )
-        }
-    }
-}
-
-@Composable
-fun SettingsThemeScreen(
-    currentTheme: ThemeMode,
-    onThemeSelected: (ThemeMode) -> Unit
-) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(12.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp)
-    ) {
-        item {
-            ElevatedCard(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(18.dp),
-                colors = CardDefaults.elevatedCardColors(containerColor = Color(0xFF101623))
-            ) {
-                Column(
-                    modifier = Modifier.padding(14.dp),
-                    verticalArrangement = Arrangement.spacedBy(6.dp)
-                ) {
-                    Text(
-                        text = "Theme",
-                        style = MaterialTheme.typography.headlineMedium,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        text = "Select your preferred appearance.",
-                        color = Color(0xFFB7B9C8)
-                    )
-                }
-            }
-        }
-        item {
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(18.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFF111724))
-            ) {
-                Column(
-                    modifier = Modifier.padding(14.dp),
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    ThemeMode.values().forEach { mode ->
-                        val selected = currentTheme == mode
-                        val label = when (mode) {
-                            ThemeMode.SYSTEM -> "System"
-                            ThemeMode.DARK -> "Dark"
-                            ThemeMode.LIGHT -> "Light"
-                            ThemeMode.GLASS -> "Glass"
-                        }
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable { onThemeSelected(mode) }
-                                .padding(vertical = 8.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(10.dp)
-                        ) {
-                            Box(modifier = Modifier.size(20.dp)) {
-                                if (selected) {
-                                    Icon(
-                                        imageVector = Icons.Filled.Check,
-                                        contentDescription = null,
-                                        tint = Color(0xFF8E96FF),
-                                        modifier = Modifier.size(20.dp)
-                                    )
-                                }
-                            }
-                            Text(
-                                text = label,
-                                fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
-                                color = if (selected) Color.White else Color(0xFFB7B9C8)
-                            )
-                        }
-                    }
-                }
-            }
         }
     }
 }
