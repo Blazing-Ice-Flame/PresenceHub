@@ -18,7 +18,10 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            PresenceHubTheme {
+            PresenceHubTheme(
+                themeMode = viewModel.settingsState.collectAsStateWithLifecycle().value.themeMode,
+                dynamicColor = viewModel.settingsState.collectAsStateWithLifecycle().value.dynamicColors
+            ) {
                 val storeState = viewModel.storeState.collectAsStateWithLifecycle().value
                 val accountState = viewModel.accountState.collectAsStateWithLifecycle().value
                 val settingsState = viewModel.settingsState.collectAsStateWithLifecycle().value
