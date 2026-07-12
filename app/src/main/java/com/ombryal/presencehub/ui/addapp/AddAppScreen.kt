@@ -1,5 +1,6 @@
 package com.ombryal.presencehub.ui.addapp
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -15,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.ombryal.presencehub.plugins.PluginRegistryEntry
 import com.ombryal.presencehub.ui.theme.CircleContainer
@@ -32,7 +34,10 @@ fun AddAppScreen(
 ) {
     var searchQuery by remember { mutableStateOf("") }
     val visibleItems = remember(searchQuery) {
-        PluginStoreCatalog.items.filter { it.title.contains(searchQuery, ignoreCase = true) || it.subtitle.contains(searchQuery, ignoreCase = true) }
+        PluginStoreCatalog.items.filter {
+            it.title.contains(searchQuery, ignoreCase = true) ||
+            it.subtitle.contains(searchQuery, ignoreCase = true)
+        }
     }
 
     Column(
@@ -42,7 +47,7 @@ fun AddAppScreen(
             .padding(12.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        // ---- Search bar (glass) ----
+        // Search bar
         GlassContainer(modifier = Modifier.fillMaxWidth()) {
             Column(modifier = Modifier.padding(14.dp)) {
                 OutlinedTextField(
@@ -56,7 +61,7 @@ fun AddAppScreen(
             }
         }
 
-        // ---- Plugin list (stretches) ----
+        // Plugin list
         GlassContainer(
             modifier = Modifier
                 .fillMaxWidth()
@@ -77,7 +82,7 @@ fun AddAppScreen(
                     Text(
                         text = "No plugins match your search.",
                         modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp),
-                        textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                        textAlign = TextAlign.Center,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 } else {
@@ -151,6 +156,6 @@ fun AddAppScreen(
             }
         }
 
-        Spacer(Modifier.height(80.dp)) // space for floating nav
+        Spacer(Modifier.height(80.dp))
     }
 }
