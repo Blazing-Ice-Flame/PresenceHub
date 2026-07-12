@@ -2,21 +2,47 @@ package com.ombryal.presencehub.ui.settings
 
 import android.content.Intent
 import android.provider.Settings
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.Button
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.Devices
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Palette
+import androidx.compose.material.icons.filled.People
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -29,102 +55,345 @@ fun SettingsScreen(
 ) {
     val context = LocalContext.current
 
+    var generalExpanded by remember { mutableStateOf(true) }
+    var presenceExpanded by remember { mutableStateOf(true) }
+    var notificationsExpanded by remember { mutableStateOf(false) }
+    var developerExpanded by remember { mutableStateOf(false) }
+    var privacyExpanded by remember { mutableStateOf(false) }
+
+    var autoStart by remember { mutableStateOf(false) }
+    var dynamicColors by remember { mutableStateOf(true) }
+    var showPluginUpdates by remember { mutableStateOf(true) }
+
+    var showVideoTitle by remember { mutableStateOf(true) }
+    var showChannelName by remember { mutableStateOf(true) }
+    var showProgress by remember { mutableStateOf(true) }
+    var showElapsedTime by remember { mutableStateOf(true) }
+
+    var notificationAccess by remember { mutableStateOf(false) }
+    var backgroundUpdates by remember { mutableStateOf(true) }
+
+    var debugLogging by remember { mutableStateOf(false) }
+    var developerMode by remember { mutableStateOf(false) }
+
+    var hideTitles by remember { mutableStateOf(false) }
+    var hideChannels by remember { mutableStateOf(false) }
+    var clearHistoryOnExit by remember { mutableStateOf(false) }
+
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(14.dp)
+        contentPadding = PaddingValues(12.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         item {
-            ElevatedCard(modifier = Modifier.fillMaxWidth()) {
+            ElevatedCard(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(18.dp),
+                colors = CardDefaults.elevatedCardColors(containerColor = Color(0xFF101623))
+            ) {
                 Column(
-                    modifier = Modifier.padding(20.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                    modifier = Modifier.padding(14.dp),
+                    verticalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
                     Text(
                         text = "Settings",
                         style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.Bold
                     )
-                    Text(text = "Notifications, service control, and plugin store refresh.")
+                    Text(
+                        text = "General controls, Rich Presence, notifications, developer tools, and privacy.",
+                        color = Color(0xFFB7B9C8)
+                    )
                 }
             }
         }
 
         item {
-            Card(modifier = Modifier.fillMaxWidth()) {
-                Column(
-                    modifier = Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    Text(
-                        text = "Notification access",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                    Text(text = "Needed for YouTube detection.")
+            SettingsSectionCard(
+                icon = Icons.Filled.Settings,
+                title = "General",
+                expanded = generalExpanded,
+                onToggle = { generalExpanded = !generalExpanded }
+            ) {
+                SettingsSwitchRow(
+                    label = "Auto start RPC",
+                    description = "Start the RPC service automatically.",
+                    checked = autoStart,
+                    onCheckedChange = { autoStart = it }
+                )
+                SettingsSwitchRow(
+                    label = "Dynamic colors",
+                    description = "Use system colors when available.",
+                    checked = dynamicColors,
+                    onCheckedChange = { dynamicColors = it }
+                )
+                SettingsSwitchRow(
+                    label = "Show plugin updates",
+                    description = "Show update badges in the store.",
+                    checked = showPluginUpdates,
+                    onCheckedChange = { showPluginUpdates = it }
+                )
 
-                    Button(
-                        onClick = {
-                            context.startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
-                        },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(text = "Enable Notification Access")
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                    OutlinedButton(onClick = onStartRpc, modifier = Modifier.weight(1f)) {
+                        Text("Start RPC")
                     }
-                }
-            }
-        }
-
-        item {
-            Card(modifier = Modifier.fillMaxWidth()) {
-                Column(
-                    modifier = Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    Text(
-                        text = "RPC service",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.SemiBold
-                    )
-
-                    Button(
-                        onClick = onStartRpc,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(text = "Start RPC Service")
-                    }
-
-                    OutlinedButton(
-                        onClick = onStopRpc,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(text = "Stop RPC Service")
+                    OutlinedButton(onClick = onStopRpc, modifier = Modifier.weight(1f)) {
+                        Text("Stop RPC")
                     }
                 }
             }
         }
 
         item {
-            Card(modifier = Modifier.fillMaxWidth()) {
-                Column(
-                    modifier = Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    Text(
-                        text = "Plugin store",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                    Text(text = "Refresh the remote plugin index.")
+            SettingsSectionCard(
+                icon = Icons.Filled.Tune,
+                title = "Rich Presence",
+                expanded = presenceExpanded,
+                onToggle = { presenceExpanded = !presenceExpanded }
+            ) {
+                SettingsSwitchRow(
+                    label = "Video title",
+                    description = "Show the current video title.",
+                    checked = showVideoTitle,
+                    onCheckedChange = { showVideoTitle = it }
+                )
+                SettingsSwitchRow(
+                    label = "Channel name",
+                    description = "Show the channel or creator name.",
+                    checked = showChannelName,
+                    onCheckedChange = { showChannelName = it }
+                )
+                SettingsSwitchRow(
+                    label = "Progress",
+                    description = "Display the play progress.",
+                    checked = showProgress,
+                    onCheckedChange = { showProgress = it }
+                )
+                SettingsSwitchRow(
+                    label = "Elapsed time",
+                    description = "Display elapsed time.",
+                    checked = showElapsedTime,
+                    onCheckedChange = { showElapsedTime = it }
+                )
+            }
+        }
 
-                    OutlinedButton(
-                        onClick = onRefreshPlugins,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(text = "Refresh Plugin Store")
+        item {
+            SettingsSectionCard(
+                icon = Icons.Filled.Notifications,
+                title = "Notifications",
+                expanded = notificationsExpanded,
+                onToggle = { notificationsExpanded = !notificationsExpanded }
+            ) {
+                SettingsSwitchRow(
+                    label = "Notification access",
+                    description = "Allow YouTube detection from notifications.",
+                    checked = notificationAccess,
+                    onCheckedChange = { notificationAccess = it }
+                )
+                SettingsSwitchRow(
+                    label = "Background updates",
+                    description = "Keep checking active playback in the background.",
+                    checked = backgroundUpdates,
+                    onCheckedChange = { backgroundUpdates = it }
+                )
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                OutlinedButton(
+                    onClick = {
+                        context.startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Open Notification Access")
+                }
+            }
+        }
+
+        item {
+            SettingsSectionCard(
+                icon = Icons.Filled.Devices,
+                title = "Developer",
+                expanded = developerExpanded,
+                onToggle = { developerExpanded = !developerExpanded }
+            ) {
+                SettingsSwitchRow(
+                    label = "Debug logging",
+                    description = "Show extra logs while testing.",
+                    checked = debugLogging,
+                    onCheckedChange = { debugLogging = it }
+                )
+                SettingsSwitchRow(
+                    label = "Developer mode",
+                    description = "Enable extra debug actions.",
+                    checked = developerMode,
+                    onCheckedChange = { developerMode = it }
+                )
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                    OutlinedButton(onClick = onRefreshPlugins, modifier = Modifier.weight(1f)) {
+                        Icon(Icons.Filled.Refresh, contentDescription = null)
+                        Spacer(modifier = Modifier.padding(4.dp))
+                        Text("Refresh Store")
+                    }
+                    OutlinedButton(onClick = onStartRpc, modifier = Modifier.weight(1f)) {
+                        Text("Test RPC")
                     }
                 }
             }
         }
+
+        item {
+            SettingsSectionCard(
+                icon = Icons.Filled.Lock,
+                title = "Privacy",
+                expanded = privacyExpanded,
+                onToggle = { privacyExpanded = !privacyExpanded }
+            ) {
+                SettingsSwitchRow(
+                    label = "Hide video titles",
+                    description = "Mask exact titles in the preview.",
+                    checked = hideTitles,
+                    onCheckedChange = { hideTitles = it }
+                )
+                SettingsSwitchRow(
+                    label = "Hide channel names",
+                    description = "Mask creator names in the preview.",
+                    checked = hideChannels,
+                    onCheckedChange = { hideChannels = it }
+                )
+                SettingsSwitchRow(
+                    label = "Clear history on exit",
+                    description = "Remove local presence data when closing.",
+                    checked = clearHistoryOnExit,
+                    onCheckedChange = { clearHistoryOnExit = it }
+                )
+            }
+        }
+
+        item {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(18.dp),
+                colors = CardDefaults.cardColors(containerColor = Color(0xFF111724))
+            ) {
+                Column(
+                    modifier = Modifier.padding(14.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(
+                        text = "Quick actions",
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = "Use these when testing the build.",
+                        color = Color(0xFFB7B9C8)
+                    )
+                    HorizontalDivider(color = Color(0xFF262B3A))
+
+                    Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                        OutlinedButton(onClick = onRefreshPlugins, modifier = Modifier.weight(1f)) {
+                            Text("Refresh")
+                        }
+                        OutlinedButton(
+                            onClick = {
+                                context.startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
+                            },
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text("Permissions")
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun SettingsSectionCard(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    title: String,
+    expanded: Boolean,
+    onToggle: () -> Unit,
+    content: @Composable () -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onToggle() },
+        shape = RoundedCornerShape(18.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFF111724))
+    ) {
+        Column(
+            modifier = Modifier.padding(14.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = Color(0xFF8E96FF)
+                )
+                Text(
+                    text = title,
+                    modifier = Modifier.weight(1f),
+                    fontWeight = FontWeight.Bold
+                )
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                    contentDescription = null,
+                    tint = Color(0xFFDFE3FF)
+                )
+            }
+
+            AnimatedVisibility(visible = expanded) {
+                Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                    content()
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun SettingsSwitchRow(
+    label: String,
+    description: String,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Column(modifier = Modifier.weight(1f)) {
+            Text(text = label, fontWeight = FontWeight.SemiBold)
+            Text(
+                text = description,
+                style = MaterialTheme.typography.bodySmall,
+                color = Color(0xFFB7B9C8)
+            )
+        }
+
+        Switch(
+            checked = checked,
+            onCheckedChange = onCheckedChange,
+            colors = SwitchDefaults.colors(
+                checkedThumbColor = Color(0xFF2EE58D),
+                checkedTrackColor = Color(0xFF1D5A38)
+            )
+        )
     }
 }
