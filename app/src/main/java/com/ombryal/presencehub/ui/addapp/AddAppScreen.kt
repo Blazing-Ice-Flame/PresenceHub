@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.ombryal.presencehub.plugins.PluginRegistryEntry
 import com.ombryal.presencehub.ui.theme.CircleContainer
 import com.ombryal.presencehub.ui.theme.GlassContainer
@@ -55,18 +56,25 @@ fun AddAppScreen(
                     onValueChange = { searchQuery = it },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
-                    leadingIcon = { Icon(Icons.Filled.Search, contentDescription = null) },
-                    placeholder = { Text("Search...") }
+                    leadingIcon = {
+                        Icon(
+                            Icons.Filled.Search,
+                            contentDescription = null,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    },
+                    placeholder = { Text("Search plugins...", fontSize = 14.sp) },
+                    textStyle = MaterialTheme.typography.bodyMedium,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant
+                    )
                 )
             }
         }
 
-        // Plugin list
-        GlassContainer(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-        ) {
+        // Plugin list – natural height, no forced stretching
+        GlassContainer(modifier = Modifier.fillMaxWidth()) {
             Column(modifier = Modifier.padding(14.dp)) {
                 if (isLoading) {
                     Row(
@@ -83,7 +91,8 @@ fun AddAppScreen(
                         text = "No plugins match your search.",
                         modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp),
                         textAlign = TextAlign.Center,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontSize = 13.sp
                     )
                 } else {
                     visibleItems.forEach { item ->
@@ -95,31 +104,32 @@ fun AddAppScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clickable(enabled = available) { storeEntry?.let(onOpenDetails) }
-                                .padding(vertical = 8.dp),
+                                .padding(vertical = 6.dp),
                             verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                            horizontalArrangement = Arrangement.spacedBy(10.dp)
                         ) {
-                            CircleContainer(modifier = Modifier.size(38.dp)) {
+                            CircleContainer(modifier = Modifier.size(34.dp)) {
                                 Text(
                                     text = item.title.firstOrNull()?.uppercase() ?: "?",
                                     fontWeight = FontWeight.Bold,
-                                    color = MaterialTheme.colorScheme.primary
+                                    color = MaterialTheme.colorScheme.primary,
+                                    fontSize = 14.sp
                                 )
                             }
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
                                     text = item.title,
-                                    style = MaterialTheme.typography.titleMedium,
+                                    style = MaterialTheme.typography.bodyMedium,
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.onSurface
                                 )
                                 Text(
                                     text = item.subtitle,
-                                    style = MaterialTheme.typography.bodySmall,
+                                    style = MaterialTheme.typography.labelSmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
-                                Spacer(Modifier.height(4.dp))
-                                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                                Spacer(Modifier.height(2.dp))
+                                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                                     Icon(
                                         imageVector = if (installed) Icons.Filled.Check else Icons.Filled.Timer,
                                         contentDescription = null,
@@ -128,7 +138,7 @@ fun AddAppScreen(
                                             available -> Color(0xFFF6C356)
                                             else -> MaterialTheme.colorScheme.onSurfaceVariant
                                         },
-                                        modifier = Modifier.size(16.dp)
+                                        modifier = Modifier.size(14.dp)
                                     )
                                     Text(
                                         text = when {
@@ -141,14 +151,16 @@ fun AddAppScreen(
                                             available -> if (item.availableInV1) Color(0xFFF6C356) else MaterialTheme.colorScheme.onSurfaceVariant
                                             else -> MaterialTheme.colorScheme.onSurfaceVariant
                                         },
-                                        style = MaterialTheme.typography.labelMedium
+                                        style = MaterialTheme.typography.labelSmall,
+                                        fontSize = 10.sp
                                     )
                                 }
                             }
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                                 contentDescription = null,
-                                tint = if (available) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                                tint = if (available) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.size(18.dp)
                             )
                         }
                     }
