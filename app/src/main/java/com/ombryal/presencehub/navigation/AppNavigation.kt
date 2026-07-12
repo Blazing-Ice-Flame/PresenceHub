@@ -35,6 +35,7 @@ import com.ombryal.presencehub.ui.addapp.AddAppScreen
 import com.ombryal.presencehub.ui.addapp.PluginDetailsScreen
 import com.ombryal.presencehub.ui.home.HomeScreen
 import com.ombryal.presencehub.ui.settings.SettingsScreen
+import com.ombryal.presencehub.ui.settings.SettingsUiState
 
 object Routes {
     const val HOME = "home"
@@ -62,11 +63,14 @@ private val bottomItems = listOf(
 fun AppNavigation(
     storeState: PluginStoreState,
     accountState: AccountUiState,
+    settingsState: SettingsUiState,
     onRefreshPlugins: () -> Unit,
     onInstallPlugin: (PluginRegistryEntry) -> Unit,
     onUninstallPlugin: (PluginRegistryEntry) -> Unit,
     onStartRpc: () -> Unit,
-    onStopRpc: () -> Unit
+    onStopRpc: () -> Unit,
+    onOpenSettings: () -> Unit,
+    onUpdateSettings: (SettingsUiState) -> Unit
 ) {
     val navController = rememberNavController()
     val backStackEntry by navController.currentBackStackEntryAsState()
@@ -99,7 +103,7 @@ fun AppNavigation(
                         }
                     }
 
-                    IconButton(onClick = { navController.navigate(Routes.SETTINGS) }) {
+                    IconButton(onClick = onOpenSettings) {
                         Icon(
                             imageVector = Icons.Default.Settings,
                             contentDescription = "Settings"
@@ -182,6 +186,8 @@ fun AppNavigation(
 
             composable(Routes.SETTINGS) {
                 SettingsScreen(
+                    state = settingsState,
+                    onUpdate = onUpdateSettings,
                     onStartRpc = onStartRpc,
                     onStopRpc = onStopRpc,
                     onRefreshPlugins = onRefreshPlugins
