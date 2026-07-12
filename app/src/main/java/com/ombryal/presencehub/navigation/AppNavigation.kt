@@ -115,15 +115,18 @@ fun AppNavigation(
             NavHost(
                 navController = navController,
                 startDestination = Routes.HOME,
-                modifier = Modifier.padding(paddingValues) // only top insets now
+                modifier = Modifier.padding(paddingValues)
             ) {
                 composable(Routes.HOME) {
                     HomeScreen(
                         storeState = storeState,
-                        onOpenStore = { navController.navigate(Routes.STORE) },
-                        onOpenAccount = { navController.navigate(Routes.ACCOUNT) },
-                        onOpenAbout = { navController.navigate(Routes.SETTINGS_ABOUT) },
-                        onOpenSettings = { navController.navigate(Routes.SETTINGS) }
+                        accountState = accountState,
+                        onOpenPluginDetails = { plugin ->
+                            selectedPlugin = plugin
+                            navController.navigate(Routes.PLUGIN_DETAILS)
+                        },
+                        onWatchOnYouTube = { /* TODO */ },
+                        onVisitChannel = { /* TODO */ }
                     )
                 }
                 composable(Routes.STORE) {
@@ -184,7 +187,7 @@ fun AppNavigation(
             FloatingGlassCapsule(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .padding(bottom = 48.dp),   // raised above bottom edge
+                    .padding(bottom = 48.dp),
                 currentRoute = currentRoute,
                 onNavigate = { route ->
                     if (route != currentRoute) {
