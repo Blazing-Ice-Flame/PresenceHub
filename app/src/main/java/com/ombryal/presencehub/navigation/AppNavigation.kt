@@ -1,43 +1,22 @@
 package com.ombryal.presencehub.navigation
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
@@ -46,6 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -58,23 +38,23 @@ import com.ombryal.presencehub.plugins.PluginRegistryEntry
 import com.ombryal.presencehub.plugins.PluginStoreState
 import com.ombryal.presencehub.ui.account.AccountScreen
 import com.ombryal.presencehub.ui.account.AccountUiState
-import com.ombryal.presencehub.ui.about.AboutScreen
 import com.ombryal.presencehub.ui.addapp.AddAppScreen
 import com.ombryal.presencehub.ui.addapp.PluginDetailsScreen
 import com.ombryal.presencehub.ui.home.HomeScreen
 import com.ombryal.presencehub.ui.settings.SettingsScreen
 import com.ombryal.presencehub.ui.settings.SettingsAccountsScreen
 import com.ombryal.presencehub.ui.settings.SettingsThemeScreen
+import com.ombryal.presencehub.ui.settings.SettingsAboutScreen
 import com.ombryal.presencehub.ui.settings.SettingsUiState
 
 object Routes {
-    const val HOME = "home"
     const val STORE = "store"
+    const val HOME = "home"
     const val ACCOUNT = "account"
-    const val ABOUT = "about"
     const val SETTINGS = "settings"
     const val SETTINGS_ACCOUNTS = "settings_accounts"
     const val SETTINGS_THEME = "settings_theme"
+    const val SETTINGS_ABOUT = "settings_about"
     const val PLUGIN_DETAILS = "plugin_details"
 }
 
@@ -98,7 +78,7 @@ fun AppNavigation(
     var selectedPlugin by remember { mutableStateOf<PluginRegistryEntry?>(null) }
 
     val isSettingsScreen = currentRoute in listOf(
-        Routes.SETTINGS, Routes.SETTINGS_ACCOUNTS, Routes.SETTINGS_THEME
+        Routes.SETTINGS, Routes.SETTINGS_ACCOUNTS, Routes.SETTINGS_THEME, Routes.SETTINGS_ABOUT
     )
 
     Scaffold(
@@ -121,25 +101,16 @@ fun AppNavigation(
                             Routes.HOME -> "PresenceHub"
                             Routes.STORE -> "Plugin Store"
                             Routes.ACCOUNT -> "Account"
-                            Routes.ABOUT -> "About"
                             Routes.SETTINGS -> "Settings"
                             Routes.SETTINGS_ACCOUNTS -> "Accounts"
                             Routes.SETTINGS_THEME -> "Theme"
+                            Routes.SETTINGS_ABOUT -> "About"
                             Routes.PLUGIN_DETAILS -> "Plugin Details"
                             else -> "PresenceHub"
                         }
                     )
                 },
                 actions = {
-                    if (currentRoute == Routes.HOME) {
-                        IconButton(onClick = { navController.navigate(Routes.STORE) }) {
-                            Icon(
-                                imageVector = Icons.Default.Add,
-                                contentDescription = "Open Plugin Store"
-                            )
-                        }
-                    }
-
                     if (!isSettingsScreen) {
                         IconButton(onClick = { navController.navigate(Routes.SETTINGS) }) {
                             Icon(
@@ -185,7 +156,7 @@ fun AppNavigation(
                     storeState = storeState,
                     onOpenStore = { navController.navigate(Routes.STORE) },
                     onOpenAccount = { navController.navigate(Routes.ACCOUNT) },
-                    onOpenAbout = { navController.navigate(Routes.ABOUT) },
+                    onOpenAbout = { navController.navigate(Routes.SETTINGS_ABOUT) },
                     onOpenSettings = { navController.navigate(Routes.SETTINGS) }
                 )
             }
@@ -210,13 +181,11 @@ fun AppNavigation(
                     onStopRpc = onStopRpc
                 )
             }
-            composable(Routes.ABOUT) {
-                AboutScreen()
-            }
             composable(Routes.SETTINGS) {
                 SettingsScreen(
                     onAccountsClick = { navController.navigate(Routes.SETTINGS_ACCOUNTS) },
-                    onThemeClick = { navController.navigate(Routes.SETTINGS_THEME) }
+                    onThemeClick = { navController.navigate(Routes.SETTINGS_THEME) },
+                    onAboutClick = { navController.navigate(Routes.SETTINGS_ABOUT) }
                 )
             }
             composable(Routes.SETTINGS_ACCOUNTS) {
@@ -227,6 +196,9 @@ fun AppNavigation(
                     currentTheme = settingsState.themeMode,
                     onThemeSelected = { mode -> onUpdateSettings(settingsState.copy(themeMode = mode)) }
                 )
+            }
+            composable(Routes.SETTINGS_ABOUT) {
+                SettingsAboutScreen()
             }
             composable(Routes.PLUGIN_DETAILS) {
                 selectedPlugin?.let { plugin ->
@@ -248,9 +220,9 @@ private fun FloatingGlassCapsule(
     onNavigate: (String) -> Unit
 ) {
     val items = listOf(
-        TabItem(Routes.ACCOUNT, "Account", Icons.Default.Person),
+        TabItem(Routes.STORE, "Store", Icons.Default.Store),
         TabItem(Routes.HOME, "Home", Icons.Default.Home),
-        TabItem(Routes.ABOUT, "About", Icons.Default.Info)
+        TabItem(Routes.ACCOUNT, "Account", Icons.Default.Person)
     )
 
     val activeIndex = items.indexOfFirst { it.route == currentRoute }.coerceAtLeast(0)
@@ -260,14 +232,14 @@ private fun FloatingGlassCapsule(
 
     BoxWithConstraints(
         modifier = Modifier
-            .fillMaxWidth(0.92f)
-            .padding(bottom = 28.dp)
-            .height(80.dp)
+            .fillMaxWidth(0.88f)
+            .padding(bottom = 20.dp)
+            .height(64.dp)
             .onGloballyPositioned { coordinates ->
                 capsuleWidthDp = with(density) { coordinates.size.width.toDp() }
             }
     ) {
-        val pillWidth = capsuleWidthDp * 0.32f
+        val pillWidth = capsuleWidthDp * 0.28f   // compact pill, same for all
         val segmentWidth = capsuleWidthDp / 3
         val pillOffsetX by animateDpAsState(
             targetValue = segmentWidth * activeIndex + (segmentWidth - pillWidth) / 2,
@@ -278,14 +250,14 @@ private fun FloatingGlassCapsule(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(80.dp)
+                .height(64.dp)
                 .shadow(
-                    elevation = 24.dp,
-                    shape = RoundedCornerShape(36.dp),
-                    ambientColor = Color.Magenta.copy(alpha = 0.15f),
-                    spotColor = Color.Magenta.copy(alpha = 0.15f)
+                    elevation = 16.dp,
+                    shape = RoundedCornerShape(28.dp),
+                    ambientColor = Color.Magenta.copy(alpha = 0.1f),
+                    spotColor = Color.Magenta.copy(alpha = 0.1f)
                 )
-                .clip(RoundedCornerShape(36.dp))
+                .clip(RoundedCornerShape(28.dp))
                 .background(
                     Brush.verticalGradient(
                         colors = listOf(
@@ -294,15 +266,15 @@ private fun FloatingGlassCapsule(
                         )
                     )
                 )
-                .border(1.dp, Color.White.copy(alpha = 0.08f), RoundedCornerShape(36.dp))
+                .border(1.dp, Color.White.copy(alpha = 0.08f), RoundedCornerShape(28.dp))
         ) {
-            // Animated pill
+            // Animated pill highlight (small, same size for all tabs)
             Box(
                 modifier = Modifier
                     .offset(x = pillOffsetX)
                     .padding(vertical = 6.dp)
-                    .size(width = pillWidth, height = 68.dp)
-                    .clip(RoundedCornerShape(30.dp))
+                    .size(width = pillWidth, height = 52.dp)
+                    .clip(RoundedCornerShape(22.dp))
                     .background(
                         Brush.horizontalGradient(
                             colors = listOf(
@@ -310,16 +282,16 @@ private fun FloatingGlassCapsule(
                                 Color(0x336366F1)
                             )
                         ),
-                        RoundedCornerShape(30.dp)
+                        RoundedCornerShape(22.dp)
                     )
-                    .border(1.dp, Color.White.copy(alpha = 0.1f), RoundedCornerShape(30.dp))
+                    .border(1.dp, Color.White.copy(alpha = 0.12f), RoundedCornerShape(22.dp))
             )
 
             // Tabs
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(80.dp),
+                    .height(64.dp),
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -342,25 +314,41 @@ private fun Tab(
     selected: Boolean,
     onClick: () -> Unit
 ) {
+    val labelAlpha by animateFloatAsState(
+        targetValue = if (selected) 1f else 0f,
+        animationSpec = tween(250)
+    )
+    val scale by animateFloatAsState(
+        targetValue = if (selected) 1.05f else 1f,
+        animationSpec = tween(300)
+    )
+
     Column(
         modifier = Modifier
             .clickable(onClick = onClick)
-            .scale(if (selected) 1.05f else 1f)
-            .padding(vertical = 8.dp),
+            .scale(scale)
+            .padding(vertical = 4.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         Icon(
             imageVector = item.icon,
             contentDescription = item.label,
-            modifier = Modifier.size(if (item.route == Routes.HOME) 26.dp else 22.dp),
+            modifier = Modifier.size(22.dp),
             tint = if (selected) Color.White else Color(0x99B7B9C8)
         )
-        Text(
-            text = item.label,
-            fontSize = if (item.route == Routes.HOME) 11.sp else 10.sp,
-            color = if (selected) Color.White else Color(0x99B7B9C8)
-        )
+        if (selected) {
+            Text(
+                text = item.label,
+                fontSize = 10.sp,
+                fontWeight = FontWeight.Medium,
+                color = Color.White,
+                modifier = Modifier.alpha(labelAlpha)
+            )
+        } else {
+            // Keep a tiny space so height stays consistent
+            Spacer(modifier = Modifier.height(4.dp))
+        }
     }
 }
 
