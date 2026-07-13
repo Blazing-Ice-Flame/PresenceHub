@@ -17,7 +17,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
@@ -45,7 +44,7 @@ fun FloatingGlassCapsule(
     BoxWithConstraints(
         modifier = modifier
             .fillMaxWidth(0.88f)
-            .padding(bottom = 0.dp)   // no internal padding; position controlled externally
+            .padding(bottom = 0.dp)   // position handled externally
             .height(72.dp)
     ) {
         val pillWidth = maxWidth * 0.28f
@@ -55,7 +54,7 @@ fun FloatingGlassCapsule(
             animationSpec = tween(durationMillis = 350)
         )
 
-        // Background layer (blurred glass)
+        // Background layer (translucent glass, NO blur)
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -63,7 +62,6 @@ fun FloatingGlassCapsule(
                 .clip(RoundedCornerShape(36.dp))
                 .background(Color(0x30FFFFFF))
                 .border(1.dp, Color(0x33FFFFFF), RoundedCornerShape(36.dp))
-                .blur(2.dp)
         )
 
         // Foreground content
